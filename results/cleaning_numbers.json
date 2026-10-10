@@ -1,0 +1,20 @@
+{
+ "raw_rows": 2434,
+ "duplicate_rows": 405,
+ "corrupt_rows": 2,
+ "clean_firm_years": 2028,
+ "clean_companies": 592,
+ "scope_firm_years": 1978,
+ "scope_companies": 575,
+ "naive_rows": 2432,
+ "flags": {
+  "roe_negative": 376,
+  "negative_equity": 100,
+  "ocf_negative": 66,
+  "cogs_not_reported": 414,
+  "payables_zero": 261,
+  "dso_zero": 194
+ },
+ "n_features": 21,
+ "n_flags": 6
+}

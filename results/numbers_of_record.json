@@ -1,0 +1,1471 @@
+{
+ "scope": {
+  "firm_years": 1978,
+  "companies": 575,
+  "sg_share_firm_years": 0.429
+ },
+ "split": {
+  "train_companies": 455,
+  "train_firm_years": 1581,
+  "holdout_companies": 120,
+  "holdout_firm_years": 397
+ },
+ "constrained_inputs": 13,
+ "model_size": {
+  "grid": [
+   {
+    "n_estimators": 100,
+    "num_leaves": 3,
+    "cv_auc": 0.78,
+    "cv_se": 0.009,
+    "train_auc": 0.852,
+    "total_leaves": 300
+   },
+   {
+    "n_estimators": 100,
+    "num_leaves": 5,
+    "cv_auc": 0.8,
+    "cv_se": 0.009,
+    "train_auc": 0.887,
+    "total_leaves": 500
+   },
+   {
+    "n_estimators": 100,
+    "num_leaves": 7,
+    "cv_auc": 0.805,
+    "cv_se": 0.009,
+    "train_auc": 0.91,
+    "total_leaves": 700
+   },
+   {
+    "n_estimators": 100,
+    "num_leaves": 10,
+    "cv_auc": 0.813,
+    "cv_se": 0.009,
+    "train_auc": 0.932,
+    "total_leaves": 1000
+   },
+   {
+    "n_estimators": 100,
+    "num_leaves": 15,
+    "cv_auc": 0.816,
+    "cv_se": 0.009,
+    "train_auc": 0.954,
+    "total_leaves": 1500
+   },
+   {
+    "n_estimators": 200,
+    "num_leaves": 3,
+    "cv_auc": 0.798,
+    "cv_se": 0.009,
+    "train_auc": 0.883,
+    "total_leaves": 600
+   },
+   {
+    "n_estimators": 200,
+    "num_leaves": 5,
+    "cv_auc": 0.811,
+    "cv_se": 0.009,
+    "train_auc": 0.923,
+    "total_leaves": 1000
+   },
+   {
+    "n_estimators": 200,
+    "num_leaves": 7,
+    "cv_auc": 0.814,
+    "cv_se": 0.009,
+    "train_auc": 0.946,
+    "total_leaves": 1400
+   },
+   {
+    "n_estimators": 200,
+    "num_leaves": 10,
+    "cv_auc": 0.818,
+    "cv_se": 0.008,
+    "train_auc": 0.968,
+    "total_leaves": 2000
+   },
+   {
+    "n_estimators": 200,
+    "num_leaves": 15,
+    "cv_auc": 0.817,
+    "cv_se": 0.008,
+    "train_auc": 0.986,
+    "total_leaves": 3000
+   },
+   {
+    "n_estimators": 400,
+    "num_leaves": 3,
+    "cv_auc": 0.808,
+    "cv_se": 0.008,
+    "train_auc": 0.914,
+    "total_leaves": 1200
+   },
+   {
+    "n_estimators": 400,
+    "num_leaves": 5,
+    "cv_auc": 0.815,
+    "cv_se": 0.008,
+    "train_auc": 0.957,
+    "total_leaves": 2000
+   },
+   {
+    "n_estimators": 400,
+    "num_leaves": 7,
+    "cv_auc": 0.815,
+    "cv_se": 0.008,
+    "train_auc": 0.979,
+    "total_leaves": 2800
+   },
+   {
+    "n_estimators": 400,
+    "num_leaves": 10,
+    "cv_auc": 0.815,
+    "cv_se": 0.008,
+    "train_auc": 0.994,
+    "total_leaves": 4000
+   },
+   {
+    "n_estimators": 400,
+    "num_leaves": 15,
+    "cv_auc": 0.813,
+    "cv_se": 0.008,
+    "train_auc": 1.0,
+    "total_leaves": 6000
+   },
+   {
+    "n_estimators": 800,
+    "num_leaves": 3,
+    "cv_auc": 0.81,
+    "cv_se": 0.008,
+    "train_auc": 0.945,
+    "total_leaves": 2400
+   },
+   {
+    "n_estimators": 800,
+    "num_leaves": 5,
+    "cv_auc": 0.808,
+    "cv_se": 0.008,
+    "train_auc": 0.986,
+    "total_leaves": 4000
+   },
+   {
+    "n_estimators": 800,
+    "num_leaves": 7,
+    "cv_auc": 0.807,
+    "cv_se": 0.008,
+    "train_auc": 0.998,
+    "total_leaves": 5600
+   },
+   {
+    "n_estimators": 800,
+    "num_leaves": 10,
+    "cv_auc": 0.809,
+    "cv_se": 0.007,
+    "train_auc": 1.0,
+    "total_leaves": 8000
+   },
+   {
+    "n_estimators": 800,
+    "num_leaves": 15,
+    "cv_auc": 0.812,
+    "cv_se": 0.007,
+    "train_auc": 1.0,
+    "total_leaves": 12000
+   }
+  ],
+  "chosen_trees": 200.0,
+  "chosen_leaves": 5.0,
+  "best_cv_auc": 0.818,
+  "one_se": 0.008,
+  "previous_trees": 400,
+  "previous_leaves": 15
+ },
+ "leakage": {
+  "auc_random_with_duplicates": 0.873,
+  "auc_random_deduplicated": 0.857,
+  "auc_grouped": 0.811,
+  "total": 0.062,
+  "from_duplicates": 0.015,
+  "from_company_overlap": 0.047
+ },
+ "auc_by_inputs": {
+  "all inputs": 0.842,
+  "without agency": 0.822,
+  "deployable": 0.811
+ },
+ "model_comparison_cv": {
+  "LightGBM, monotone": {
+   "AUC": 0.811,
+   "fold sd": 0.034,
+   "vs champion": 0.0,
+   "sd of difference": 0.0,
+   "company-weighted": 0.801,
+   "PR-AUC": 0.78,
+   "BBB vs BB AUC": 0.693
+  },
+  "LightGBM, unconstrained": {
+   "AUC": 0.822,
+   "fold sd": 0.031,
+   "vs champion": 0.011,
+   "sd of difference": 0.008,
+   "company-weighted": 0.807,
+   "PR-AUC": 0.787,
+   "BBB vs BB AUC": 0.705
+  },
+  "LightGBM, FCF/OCF unconstrained": {
+   "AUC": 0.813,
+   "fold sd": 0.032,
+   "vs champion": 0.002,
+   "sd of difference": 0.003,
+   "company-weighted": 0.802,
+   "PR-AUC": 0.78,
+   "BBB vs BB AUC": 0.695
+  },
+  "LightGBM, monotone, company-weighted": {
+   "AUC": 0.811,
+   "fold sd": 0.03,
+   "vs champion": 0.001,
+   "sd of difference": 0.01,
+   "company-weighted": 0.804,
+   "PR-AUC": 0.78,
+   "BBB vs BB AUC": 0.688
+  },
+  "logistic": {
+   "AUC": 0.785,
+   "fold sd": 0.032,
+   "vs champion": -0.026,
+   "sd of difference": 0.029,
+   "company-weighted": 0.778,
+   "PR-AUC": 0.754,
+   "BBB vs BB AUC": 0.673
+  },
+  "spline logistic, C=0.03": {
+   "AUC": 0.819,
+   "fold sd": 0.03,
+   "vs champion": 0.008,
+   "sd of difference": 0.014,
+   "company-weighted": 0.806,
+   "PR-AUC": 0.787,
+   "BBB vs BB AUC": 0.704
+  },
+  "spline logistic, C=0.1": {
+   "AUC": 0.813,
+   "fold sd": 0.03,
+   "vs champion": 0.003,
+   "sd of difference": 0.016,
+   "company-weighted": 0.803,
+   "PR-AUC": 0.779,
+   "BBB vs BB AUC": 0.698
+  },
+  "spline logistic, C=0.3": {
+   "AUC": 0.806,
+   "fold sd": 0.029,
+   "vs champion": -0.004,
+   "sd of difference": 0.02,
+   "company-weighted": 0.797,
+   "PR-AUC": 0.772,
+   "BBB vs BB AUC": 0.691
+  },
+  "spline logistic, C=1.0": {
+   "AUC": 0.799,
+   "fold sd": 0.03,
+   "vs champion": -0.012,
+   "sd of difference": 0.023,
+   "company-weighted": 0.79,
+   "PR-AUC": 0.764,
+   "BBB vs BB AUC": 0.684
+  }
+ },
+ "model_class_auc_spread": 0.037,
+ "prauc_no_skill_cv": 0.429,
+ "company_weighted_challenger": {
+  "AUC": 0.811,
+  "fold sd": 0.03,
+  "vs champion": 0.001,
+  "sd of difference": 0.01,
+  "company-weighted": 0.804,
+  "PR-AUC": 0.78,
+  "BBB vs BB AUC": 0.688
+ },
+ "fcf_ocf": {
+  "unconstrained_rho_value_shap": 0.172,
+  "within_sector_rho_with_grade": -0.145,
+  "auc_cost_of_constraint": -0.002
+ },
+ "platt": {
+  "slope": 0.987,
+  "intercept": -0.019
+ },
+ "calibration_holdout": {
+  "raw score": {
+   "slope": 0.865,
+   "slope_ci": [
+    0.593,
+    1.165
+   ],
+   "intercept": -0.165,
+   "intercept_ci": [
+    -0.585,
+    0.199
+   ],
+   "brier": 0.192
+  },
+  "calibrated": {
+   "slope": 0.876,
+   "slope_ci": [
+    0.601,
+    1.18
+   ],
+   "intercept": -0.149,
+   "intercept_ci": [
+    -0.567,
+    0.218
+   ],
+   "brier": 0.192
+  },
+  "quintiles": {
+   "predicted": [
+    0.139,
+    0.267,
+    0.395,
+    0.614,
+    0.841
+   ],
+   "actual": [
+    0.2,
+    0.291,
+    0.266,
+    0.57,
+    0.812
+   ]
+  }
+ },
+ "review_budget_companies": [
+  {
+   "budget": 0.2,
+   "SG caught (CV)": 0.365,
+   "SG caught (holdout)": 0.345,
+   "95% CI": "[0.28, 0.44]",
+   "precision (holdout)": 0.792,
+   "random ranking": 0.2
+  },
+  {
+   "budget": 0.3,
+   "SG caught (CV)": 0.509,
+   "SG caught (holdout)": 0.491,
+   "95% CI": "[0.42, 0.62]",
+   "precision (holdout)": 0.75,
+   "random ranking": 0.3
+  },
+  {
+   "budget": 0.4,
+   "SG caught (CV)": 0.627,
+   "SG caught (holdout)": 0.655,
+   "95% CI": "[0.56, 0.76]",
+   "precision (holdout)": 0.75,
+   "random ranking": 0.4
+  },
+  {
+   "budget": 0.5,
+   "SG caught (CV)": 0.748,
+   "SG caught (holdout)": 0.764,
+   "95% CI": "[0.67, 0.85]",
+   "precision (holdout)": 0.7,
+   "random ranking": 0.5
+  }
+ ],
+ "screen": {
+  "threshold_calibrated_psg": 0.297,
+  "target_recall_oof": 0.85,
+  "set_on": "latest statement per training company, out of fold",
+  "holdout_companies": 120,
+  "flagged_share": 0.692,
+  "flagged_ci": [
+   0.608,
+   0.775
+  ],
+  "sg_recall": 0.855,
+  "sg_recall_ci": [
+   0.755,
+   0.943
+  ]
+ },
+ "headline": {
+  "cv_auc_mean": 0.811,
+  "cv_auc_sd": 0.034,
+  "cv_auc_company_weighted": 0.801,
+  "cv_prauc": 0.78,
+  "holdout_auc": 0.761,
+  "holdout_auc_ci": [
+   0.681,
+   0.83
+  ],
+  "holdout_prauc": 0.745,
+  "holdout_prauc_no_skill": 0.428,
+  "boundary_auc_cv": 0.693,
+  "boundary_auc_holdout": 0.674
+ },
+ "holdout_latest_company": {
+  "companies": 120,
+  "auc": 0.789,
+  "auc_ci": [
+   0.703,
+   0.865
+  ],
+  "prauc": 0.772,
+  "prauc_no_skill": 0.458,
+  "calibration_slope": 0.964,
+  "slope_ci": [
+   0.622,
+   1.451
+  ],
+  "calibration_intercept": -0.24,
+  "intercept_ci": [
+   -0.708,
+   0.194
+  ],
+  "brier": 0.185,
+  "quintiles": {
+   "predicted": [
+    0.168,
+    0.295,
+    0.486,
+    0.693,
+    0.869
+   ],
+   "actual": [
+    0.208,
+    0.167,
+    0.417,
+    0.708,
+    0.792
+   ]
+  }
+ },
+ "overfitting_auc": {
+  "chosen": {
+   "training companies (in-sample)": 0.91,
+   "CV": 0.811,
+   "holdout": 0.761
+  },
+  "previous": {
+   "training companies (in-sample)": 0.998,
+   "CV": 0.813,
+   "holdout": 0.751
+  }
+ },
+ "prediction_stability": {
+  "refits": 20,
+  "held_fixed": "calibrator and screen threshold",
+  "median_sd_psg": 0.078,
+  "p90_sd_psg": 0.118,
+  "share_screen_stable_90pct": 0.725,
+  "less_stable_companies": 33,
+  "less_stable_within_0_10_of_screen": 29,
+  "median_distance_less_stable": 0.042,
+  "median_distance_stable": 0.338
+ },
+ "sector_diagnostics": {
+  "Basic Industries": {
+   "companies": 61,
+   "firm_years": 202,
+   "SG share": 0.559,
+   "AUC (CV)": 0.766,
+   "mean P(SG) (CV)": 0.503,
+   "holdout companies": 18,
+   "AUC (holdout, exploratory)": 0.813,
+   "small": false
+  },
+  "Energy": {
+   "companies": 61,
+   "firm_years": 236,
+   "SG share": 0.504,
+   "AUC (CV)": 0.782,
+   "mean P(SG) (CV)": 0.505,
+   "holdout companies": 15,
+   "AUC (holdout, exploratory)": 0.692,
+   "small": false
+  },
+  "Capital Goods": {
+   "companies": 60,
+   "firm_years": 206,
+   "SG share": 0.383,
+   "AUC (CV)": 0.818,
+   "mean P(SG) (CV)": 0.408,
+   "holdout companies": 11,
+   "AUC (holdout, exploratory)": 0.864,
+   "small": false
+  },
+  "Consumer Services": {
+   "companies": 60,
+   "firm_years": 189,
+   "SG share": 0.619,
+   "AUC (CV)": 0.756,
+   "mean P(SG) (CV)": 0.546,
+   "holdout companies": 21,
+   "AUC (holdout, exploratory)": 0.663,
+   "small": false
+  },
+  "Technology": {
+   "companies": 50,
+   "firm_years": 150,
+   "SG share": 0.467,
+   "AUC (CV)": 0.773,
+   "mean P(SG) (CV)": 0.446,
+   "holdout companies": 20,
+   "AUC (holdout, exploratory)": 0.668,
+   "small": false
+  },
+  "Public Utilities": {
+   "companies": 49,
+   "firm_years": 191,
+   "SG share": 0.204,
+   "AUC (CV)": 0.692,
+   "mean P(SG) (CV)": 0.272,
+   "holdout companies": 9,
+   "AUC (holdout, exploratory)": null,
+   "small": true
+  },
+  "Health Care": {
+   "companies": 43,
+   "firm_years": 148,
+   "SG share": 0.358,
+   "AUC (CV)": 0.916,
+   "mean P(SG) (CV)": 0.405,
+   "holdout companies": 6,
+   "AUC (holdout, exploratory)": 0.862,
+   "small": true
+  },
+  "Consumer Non-Durables": {
+   "companies": 26,
+   "firm_years": 104,
+   "SG share": 0.221,
+   "AUC (CV)": 0.827,
+   "mean P(SG) (CV)": 0.285,
+   "holdout companies": 8,
+   "AUC (holdout, exploratory)": 0.714,
+   "small": true
+  },
+  "Consumer Durables": {
+   "companies": 16,
+   "firm_years": 58,
+   "SG share": 0.466,
+   "AUC (CV)": 0.741,
+   "mean P(SG) (CV)": 0.379,
+   "holdout companies": 5,
+   "AUC (holdout, exploratory)": 0.95,
+   "small": true
+  },
+  "Transportation": {
+   "companies": 15,
+   "firm_years": 58,
+   "SG share": 0.431,
+   "AUC (CV)": 0.813,
+   "mean P(SG) (CV)": 0.379,
+   "holdout companies": 2,
+   "AUC (holdout, exploratory)": null,
+   "small": true
+  },
+  "Miscellaneous": {
+   "companies": 14,
+   "firm_years": 39,
+   "SG share": 0.359,
+   "AUC (CV)": 0.668,
+   "mean P(SG) (CV)": 0.478,
+   "holdout companies": 5,
+   "AUC (holdout, exploratory)": 1.0,
+   "small": true
+  }
+ },
+ "sector_cv_auc_range_30plus": {
+  "sectors": 7,
+  "min": 0.692,
+  "max": 0.916
+ },
+ "shap_pillar_share": {
+  "profitability": 0.295,
+  "leverage": 0.174,
+  "liquidity": 0.161,
+  "efficiency": 0.151,
+  "cash flow": 0.129,
+  "sector": 0.048,
+  "tax and reporting": 0.042
+ },
+ "shap_top_drivers": {
+  "returnOnCapitalEmployed": {
+   "mean |SHAP|": 0.336,
+   "rho(value, SHAP)": -0.962
+  },
+  "debtRatio": {
+   "mean |SHAP|": 0.312,
+   "rho(value, SHAP)": 0.941
+  },
+  "operatingCashFlowSalesRatio": {
+   "mean |SHAP|": 0.262,
+   "rho(value, SHAP)": -0.767
+  },
+  "payablesTurnover": {
+   "mean |SHAP|": 0.216,
+   "rho(value, SHAP)": 0.317
+  },
+  "cashRatio": {
+   "mean |SHAP|": 0.21,
+   "rho(value, SHAP)": 0.519
+  },
+  "returnOnAssets": {
+   "mean |SHAP|": 0.15,
+   "rho(value, SHAP)": -0.846
+  },
+  "ebitPerRevenue": {
+   "mean |SHAP|": 0.144,
+   "rho(value, SHAP)": -0.802
+  },
+  "currentRatio": {
+   "mean |SHAP|": 0.138,
+   "rho(value, SHAP)": 0.81
+  }
+ },
+ "shap_inputs_filled_or_clipped": {
+  "returnOnCapitalEmployed": {
+   "filled": 0.0,
+   "clipped": 0.023
+  },
+  "debtRatio": {
+   "filled": 0.0,
+   "clipped": 0.028
+  },
+  "operatingCashFlowSalesRatio": {
+   "filled": 0.0,
+   "clipped": 0.03
+  },
+  "payablesTurnover": {
+   "filled": 0.0,
+   "clipped": 0.033
+  },
+  "cashRatio": {
+   "filled": 0.02,
+   "clipped": 0.018
+  },
+  "returnOnAssets": {
+   "filled": 0.0,
+   "clipped": 0.025
+  },
+  "ebitPerRevenue": {
+   "filled": 0.0,
+   "clipped": 0.028
+  },
+  "currentRatio": {
+   "filled": 0.0,
+   "clipped": 0.038
+  }
+ },
+ "cash_ratio_shap_by_quintile": {
+  "values": [
+   -0.013,
+   -0.124,
+   -0.129,
+   -0.006,
+   0.659
+  ],
+  "u_shaped": true
+ },
+ "shap_local_examples": [
+  {
+   "company": "Company 280",
+   "group": "in the 30% review budget",
+   "p_sg": 0.83,
+   "top3_shap": {
+    "debtRatio": 0.608,
+    "returnOnCapitalEmployed": 0.563,
+    "operatingCashFlowSalesRatio": 0.555
+   },
+   "filled_or_clipped": {}
+  },
+  {
+   "company": "Company 367",
+   "group": "on the screen, outside the budget",
+   "p_sg": 0.49,
+   "top3_shap": {
+    "debtRatio": -0.514,
+    "returnOnCapitalEmployed": 0.461,
+    "assetTurnover": 0.434
+   },
+   "filled_or_clipped": {}
+  },
+  {
+   "company": "Company 311",
+   "group": "below the screen",
+   "p_sg": 0.215,
+   "top3_shap": {
+    "Sector=Public Utilities": -0.473,
+    "returnOnAssets": 0.329,
+    "assetTurnover": 0.318
+   },
+   "filled_or_clipped": {}
+  }
+ ],
+ "out_of_time": {
+  "Energy, new companies, 2015-16": {
+   "AUC": 0.713,
+   "companies": 19.0,
+   "firm_years": 33.0,
+   "SG_firm_years": 24.0
+  },
+  "Energy, new companies, 2015": {
+   "AUC": 0.6,
+   "companies": 10.0,
+   "firm_years": 12.0,
+   "SG_firm_years": 7.0
+  },
+  "Energy, new companies, 2016": {
+   "AUC": 0.794,
+   "companies": 16.0,
+   "firm_years": 21.0,
+   "SG_firm_years": 17.0
+  },
+  "Energy 2015": {
+   "AUC": 0.712,
+   "companies": 48.0,
+   "firm_years": 61.0,
+   "SG_firm_years": 27.0
+  },
+  "Energy 2016": {
+   "AUC": 0.838,
+   "companies": 55.0,
+   "firm_years": 74.0,
+   "SG_firm_years": 49.0
+  },
+  "all sectors, new companies": {
+   "AUC": 0.821,
+   "companies": 121.0,
+   "firm_years": 185.0,
+   "SG_firm_years": 109.0
+  }
+ },
+ "out_of_time_auc": {
+  "Energy, new companies, 2015-16": 0.713,
+  "Energy, new companies, 2015": 0.6,
+  "Energy, new companies, 2016": 0.794,
+  "Energy 2015": 0.712,
+  "Energy 2016": 0.838,
+  "all sectors, new companies": 0.821
+ },
+ "energy_by_year": {
+  "2012": {
+   "actual": 0.383,
+   "predicted": 0.304,
+   "firm_years": 47
+  },
+  "2013": {
+   "actual": 0.39,
+   "predicted": 0.408,
+   "firm_years": 41
+  },
+  "2014": {
+   "actual": 0.4,
+   "predicted": 0.394,
+   "firm_years": 55
+  },
+  "2015": {
+   "actual": 0.443,
+   "predicted": 0.47,
+   "firm_years": 61
+  },
+  "2016": {
+   "actual": 0.662,
+   "predicted": 0.685,
+   "firm_years": 74
+  }
+ },
+ "energy_same_agency_illustration": {
+  "stayed IG": {
+   "pairs": 13,
+   "companies": 13,
+   "median_psg_pre": 0.264,
+   "median_psg_2016": 0.571
+  },
+  "moved to SG": {
+   "pairs": 6,
+   "companies": 6,
+   "median_psg_pre": 0.363,
+   "median_psg_2016": 0.656
+  }
+ },
+ "migration_point_in_time": {
+  "all IG": {
+   "pairs": 438,
+   "companies": 243,
+   "movers": 27,
+   "auc": 0.637,
+   "auc_ci": [
+    0.521,
+    0.747
+   ],
+   "median_days_to_next_rating": 357.0
+  },
+  "BBB only": {
+   "pairs": 221,
+   "companies": 142,
+   "movers": 24,
+   "auc": 0.603,
+   "auc_ci": [
+    0.471,
+    0.725
+   ],
+   "median_days_to_next_rating": 363.0
+  }
+ },
+ "migration_rare_event": {
+  "all IG": {
+   "pairs": 438,
+   "movers": 27,
+   "base_rate": 0.062,
+   "prauc": 0.12,
+   "prauc_ci": [
+    0.068,
+    0.216
+   ],
+   "capture": [
+    {
+     "pairs reviewed": 0.1,
+     "movers caught": 0.259,
+     "count": "7 of 27",
+     "precision": 0.159,
+     "lift": 2.581
+    },
+    {
+     "pairs reviewed": 0.2,
+     "movers caught": 0.37,
+     "count": "10 of 27",
+     "precision": 0.114,
+     "lift": 1.843
+    },
+    {
+     "pairs reviewed": 0.3,
+     "movers caught": 0.519,
+     "count": "14 of 27",
+     "precision": 0.107,
+     "lift": 1.734
+    }
+   ]
+  },
+  "BBB only": {
+   "pairs": 221,
+   "movers": 24,
+   "base_rate": 0.109,
+   "prauc": 0.167,
+   "prauc_ci": [
+    0.1,
+    0.288
+   ],
+   "capture": [
+    {
+     "pairs reviewed": 0.1,
+     "movers caught": 0.125,
+     "count": "3 of 24",
+     "precision": 0.136,
+     "lift": 1.256
+    },
+    {
+     "pairs reviewed": 0.2,
+     "movers caught": 0.375,
+     "count": "9 of 24",
+     "precision": 0.205,
+     "lift": 1.884
+    },
+    {
+     "pairs reviewed": 0.3,
+     "movers caught": 0.458,
+     "count": "11 of 24",
+     "precision": 0.167,
+     "lift": 1.535
+    }
+   ]
+  }
+ },
+ "headroom_sensitivity": {
+  "base: tax 25%, debt-funded, screen": {
+   "screen": 0.2966,
+   "companies": 25,
+   "median headroom": 0.0533,
+   "cross at M&S 2.2%": "5 of 25",
+   "share": 0.2,
+   "exact 95% CI": "7%-41%"
+  },
+  "tax 15%": {
+   "screen": 0.2966,
+   "companies": 25,
+   "median headroom": 0.047,
+   "cross at M&S 2.2%": "5 of 25",
+   "share": 0.2,
+   "exact 95% CI": "7%-41%"
+  },
+  "tax 35%": {
+   "screen": 0.2966,
+   "companies": 25,
+   "median headroom": 0.0594,
+   "cross at M&S 2.2%": "4 of 25",
+   "share": 0.16,
+   "exact 95% CI": "5%-36%"
+  },
+  "not debt-funded (debt ratio unchanged)": {
+   "screen": 0.2966,
+   "companies": 25,
+   "median headroom": 0.0593,
+   "cross at M&S 2.2%": "5 of 25",
+   "share": 0.2,
+   "exact 95% CI": "7%-41%"
+  },
+  "screen - 0.03": {
+   "screen": 0.2666,
+   "companies": 25,
+   "median headroom": 0.0418,
+   "cross at M&S 2.2%": "7 of 25",
+   "share": 0.28,
+   "exact 95% CI": "12%-49%"
+  },
+  "screen + 0.03": {
+   "screen": 0.3266,
+   "companies": 25,
+   "median headroom": 0.0608,
+   "cross at M&S 2.2%": "5 of 25",
+   "share": 0.2,
+   "exact 95% CI": "7%-41%"
+  }
+ },
+ "headroom_sensitivity_population": 25,
+ "headroom_screen_calibrated": 0.297,
+ "headroom_companies": 120,
+ "headroom_companies_below": 37,
+ "headroom_companies_below_rated_sg": 8,
+ "headroom_companies_below_rated_ig": 29,
+ "headroom_anchors": {
+  "Norsk Hydro": 0.004,
+  "Maersk": 0.0081,
+  "MGM Resorts": 0.0068,
+  "UnitedHealth": 0.0077,
+  "Merck": 0.0115,
+  "Marks & Spencer": 0.0217
+ },
+ "headroom_to_screen_rated_ig": {
+  "companies": 29,
+  "median": 0.048,
+  "median_ci": [
+   0.0327,
+   0.0669
+  ],
+  "count_le_ms": 7,
+  "share_le_ms": 0.2414,
+  "share_le_ms_ci_exact": [
+   0.103,
+   0.4354
+  ]
+ },
+ "headroom_to_screen_rated_sg": {
+  "companies": 8,
+  "median": 0.029,
+  "median_ci": [
+   0.008,
+   0.0322
+  ],
+  "count_le_ms": 3,
+  "share_le_ms": 0.375,
+  "share_le_ms_ci_exact": [
+   0.0852,
+   0.7551
+  ]
+ },
+ "headroom_to_sg_call_rated_ig": {
+  "companies": 29,
+  "median": 0.0928,
+  "median_ci": [
+   0.0666,
+   0.1161
+  ],
+  "count_le_ms": 0,
+  "share_le_ms": 0.0,
+  "share_le_ms_ci_exact": [
+   0.0,
+   0.1194
+  ]
+ },
+ "headroom_anchor_crossing": {
+  "Norsk Hydro": {
+   "count": 2,
+   "of": 29,
+   "share": 0.069,
+   "ci_exact": [
+    0.008,
+    0.228
+   ]
+  },
+  "Maersk": {
+   "count": 3,
+   "of": 29,
+   "share": 0.103,
+   "ci_exact": [
+    0.022,
+    0.274
+   ]
+  },
+  "MGM Resorts": {
+   "count": 3,
+   "of": 29,
+   "share": 0.103,
+   "ci_exact": [
+    0.022,
+    0.274
+   ]
+  },
+  "UnitedHealth": {
+   "count": 3,
+   "of": 29,
+   "share": 0.103,
+   "ci_exact": [
+    0.022,
+    0.274
+   ]
+  },
+  "Merck": {
+   "count": 5,
+   "of": 29,
+   "share": 0.172,
+   "ci_exact": [
+    0.058,
+    0.358
+   ]
+  },
+  "Marks & Spencer": {
+   "count": 7,
+   "of": 29,
+   "share": 0.241,
+   "ci_exact": [
+    0.103,
+    0.435
+   ]
+  }
+ },
+ "headroom_outage_days": {
+  "1.0x": {
+   "median_days": 59.5,
+   "share_le_24_days": 0.276
+  },
+  "1.25x": {
+   "median_days": 47.6,
+   "share_le_24_days": 0.31
+  },
+  "1.5x": {
+   "median_days": 39.7,
+   "share_le_24_days": 0.345
+  }
+ },
+ "headroom_all_companies": {
+  "companies": 575,
+  "below_screen": 194,
+  "below_screen_rated_sg": 32,
+  "rated_ig_below_screen": 162,
+  "to_screen_rated_ig": {
+   "companies": 162,
+   "median": 0.0604,
+   "median_ci": [
+    0.0548,
+    0.0711
+   ],
+   "count_le_ms": 31,
+   "share_le_ms": 0.1914,
+   "share_le_ms_ci_exact": [
+    0.1339,
+    0.2605
+   ]
+  },
+  "to_psg_0_5_rated_ig": {
+   "companies": 162,
+   "median": 0.1017,
+   "median_ci": [
+    0.0953,
+    0.1145
+   ],
+   "count_le_ms": 3,
+   "share_le_ms": 0.0185,
+   "share_le_ms_ci_exact": [
+    0.0038,
+    0.0532
+   ]
+  },
+  "anchor_crossing": {
+   "Norsk Hydro": {
+    "count": 5,
+    "of": 162,
+    "share": 0.0309,
+    "ci_exact": [
+     0.0101,
+     0.0706
+    ]
+   },
+   "Maersk": {
+    "count": 15,
+    "of": 162,
+    "share": 0.0926,
+    "ci_exact": [
+     0.0528,
+     0.1481
+    ]
+   },
+   "MGM Resorts": {
+    "count": 12,
+    "of": 162,
+    "share": 0.0741,
+    "ci_exact": [
+     0.0389,
+     0.1258
+    ]
+   },
+   "UnitedHealth": {
+    "count": 15,
+    "of": 162,
+    "share": 0.0926,
+    "ci_exact": [
+     0.0528,
+     0.1481
+    ]
+   },
+   "Merck": {
+    "count": 18,
+    "of": 162,
+    "share": 0.1111,
+    "ci_exact": [
+     0.0672,
+     0.1699
+    ]
+   },
+   "Marks & Spencer": {
+    "count": 31,
+    "of": 162,
+    "share": 0.1914,
+    "ci_exact": [
+     0.1339,
+     0.2605
+    ]
+   }
+  },
+  "by_sector": {
+   "Consumer Durables": {
+    "companies": 5,
+    "median headroom": 0.0165,
+    "ci_lo": 0.0032,
+    "ci_hi": 0.1119,
+    "cross at M&S 2.2%": "3 of 5",
+    "share": 0.6,
+    "exact 95% CI": "15%-95%",
+    "small": true
+   },
+   "Energy": {
+    "companies": 9,
+    "median headroom": 0.0277,
+    "ci_lo": 0.0166,
+    "ci_hi": 0.0814,
+    "cross at M&S 2.2%": "4 of 9",
+    "share": 0.4444,
+    "exact 95% CI": "14%-79%",
+    "small": true
+   },
+   "Capital Goods": {
+    "companies": 26,
+    "median headroom": 0.0405,
+    "ci_lo": 0.0255,
+    "ci_hi": 0.0601,
+    "cross at M&S 2.2%": "8 of 26",
+    "share": 0.3077,
+    "exact 95% CI": "14%-52%",
+    "small": false
+   },
+   "Public Utilities": {
+    "companies": 34,
+    "median headroom": 0.0544,
+    "ci_lo": 0.0397,
+    "ci_hi": 0.0735,
+    "cross at M&S 2.2%": "5 of 34",
+    "share": 0.1471,
+    "exact 95% CI": "5%-31%",
+    "small": false
+   },
+   "Technology": {
+    "companies": 19,
+    "median headroom": 0.0607,
+    "ci_lo": 0.0354,
+    "ci_hi": 0.1385,
+    "cross at M&S 2.2%": "3 of 19",
+    "share": 0.1579,
+    "exact 95% CI": "3%-40%",
+    "small": false
+   },
+   "Basic Industries": {
+    "companies": 10,
+    "median headroom": 0.0611,
+    "ci_lo": 0.0525,
+    "ci_hi": 0.0939,
+    "cross at M&S 2.2%": "1 of 10",
+    "share": 0.1,
+    "exact 95% CI": "0%-45%",
+    "small": false
+   },
+   "Consumer Services": {
+    "companies": 10,
+    "median headroom": 0.0673,
+    "ci_lo": 0.0184,
+    "ci_hi": 0.1202,
+    "cross at M&S 2.2%": "3 of 10",
+    "share": 0.3,
+    "exact 95% CI": "7%-65%",
+    "small": false
+   },
+   "Health Care": {
+    "companies": 19,
+    "median headroom": 0.0674,
+    "ci_lo": 0.0566,
+    "ci_hi": 0.1122,
+    "cross at M&S 2.2%": "3 of 19",
+    "share": 0.1579,
+    "exact 95% CI": "3%-40%",
+    "small": false
+   },
+   "Consumer Non-Durables": {
+    "companies": 15,
+    "median headroom": 0.0698,
+    "ci_lo": 0.0449,
+    "ci_hi": 0.0916,
+    "cross at M&S 2.2%": "1 of 15",
+    "share": 0.0667,
+    "exact 95% CI": "0%-32%",
+    "small": false
+   },
+   "Miscellaneous": {
+    "companies": 7,
+    "median headroom": 0.0712,
+    "ci_lo": 0.0634,
+    "ci_hi": 0.1817,
+    "cross at M&S 2.2%": "0 of 7",
+    "share": 0.0,
+    "exact 95% CI": "0%-41%",
+    "small": true
+   },
+   "Transportation": {
+    "companies": 8,
+    "median headroom": 0.115,
+    "ci_lo": 0.089,
+    "ci_hi": 0.2046,
+    "cross at M&S 2.2%": "0 of 8",
+    "share": 0.0,
+    "exact 95% CI": "0%-37%",
+    "small": true
+   }
+  }
+ },
+ "artifact": {
+  "path": "models/shadow_rating.pkl",
+  "model": "LightGBM, monotone",
+  "trees": 200,
+  "leaves": 5,
+  "screen_calibrated_psg": 0.297,
+  "training_companies": 455,
+  "training_firm_years": 1581,
+  "data_sha256": "7e977ab740968110aa922895c01108d1af28659cedaf67c43e5807ca1c9ccb8c",
+  "python": "3.13.16",
+  "packages": {
+   "numpy": "2.3.5",
+   "pandas": "2.3.3",
+   "sklearn": "1.8.0",
+   "lightgbm": "4.6.0",
+   "cloudpickle": "3.1.2"
+  }
+ },
+ "band": {
+  "band (CV)": {
+   "exact": 0.421,
+   "within_one_grade": 0.897,
+   "mean_error_grades": 0.693
+  },
+  "always BBB (CV)": {
+   "exact": 0.33,
+   "within_one_grade": 0.768,
+   "mean_error_grades": 0.941
+  },
+  "band (holdout)": {
+   "exact": 0.343,
+   "within_one_grade": 0.846,
+   "mean_error_grades": 0.824
+  },
+  "always BBB (holdout)": {
+   "exact": 0.33,
+   "within_one_grade": 0.763,
+   "mean_error_grades": 0.919
+  }
+ },
+ "band_within_one_by_grade_cv": {
+  "AA and above": 0.461,
+  "A": 0.924,
+  "BBB": 0.969,
+  "BB": 0.954,
+  "B": 0.834,
+  "CCC and below": 0.565
+ },
+ "rating_attempt": {
+  "band_mix_firm_years": {
+   "AA and above": 0.048,
+   "A": 0.193,
+   "BBB": 0.33,
+   "BB": 0.244,
+   "B": 0.151,
+   "CCC and below": 0.034
+  },
+  "bbb_plus_bb_share": 0.574,
+  "comparison": {
+   "grade model (CV)": {
+    "exact": 0.421,
+    "within_one_grade": 0.897,
+    "mean_error_grades": 0.693
+   },
+   "grade model (holdout)": {
+    "exact": 0.343,
+    "within_one_grade": 0.846,
+    "mean_error_grades": 0.824
+   },
+   "always BBB (holdout)": {
+    "exact": 0.33,
+    "within_one_grade": 0.763,
+    "mean_error_grades": 0.919
+   },
+   "random, uniform (holdout)": {
+    "exact": 0.167,
+    "within_one_grade": 0.49,
+    "mean_error_grades": 1.684
+   },
+   "random, training mix (holdout)": {
+    "exact": 0.233,
+    "within_one_grade": 0.626,
+    "mean_error_grades": 1.301
+   },
+   "two agencies, same company (150 companies)": {
+    "exact": 0.567,
+    "within_one_grade": 0.947,
+    "mean_error_grades": 0.487
+   }
+  },
+  "agency_pairs_companies": 150,
+  "agency_same_letter": 0.56,
+  "agency_same_band": 0.567,
+  "agency_same_side": 0.86,
+  "holdout_confusion": {
+   "AA and above": {
+    "AA and above": 0,
+    "A": 11,
+    "BBB": 7,
+    "BB": 1,
+    "B": 0,
+    "CCC and below": 0
+   },
+   "A": {
+    "AA and above": 0,
+    "A": 18,
+    "BBB": 36,
+    "BB": 23,
+    "B": 0,
+    "CCC and below": 0
+   },
+   "BBB": {
+    "AA and above": 0,
+    "A": 15,
+    "BBB": 69,
+    "BB": 40,
+    "B": 7,
+    "CCC and below": 0
+   },
+   "BB": {
+    "AA and above": 0,
+    "A": 3,
+    "BBB": 41,
+    "BB": 35,
+    "B": 15,
+    "CCC and below": 1
+   },
+   "B": {
+    "AA and above": 0,
+    "A": 3,
+    "BBB": 15,
+    "BB": 37,
+    "B": 13,
+    "CCC and below": 2
+   },
+   "CCC and below": {
+    "AA and above": 0,
+    "A": 0,
+    "BBB": 1,
+    "BB": 0,
+    "B": 3,
+    "CCC and below": 1
+   }
+  },
+  "predicted_band_share_holdout": {
+   "AA and above": 0.0,
+   "A": 0.126,
+   "BBB": 0.426,
+   "BB": 0.343,
+   "B": 0.096,
+   "CCC and below": 0.01
+  },
+  "ig_sg_from_each_model": {
+   "grade model score": {
+    "AUC, IG vs SG": 0.738,
+    "AUC, BBB vs BB": 0.649
+   },
+   "dedicated SG model": {
+    "AUC, IG vs SG": 0.761,
+    "AUC, BBB vs BB": 0.674
+   }
+  }
+ },
+ "band_churn": {
+  "pairs": 841,
+  "agency_changed": 0.206,
+  "band_changed": 0.407,
+  "band_changes_small_move_share": 0.348
+ },
+ "tiers_holdout_companies": {
+  "1 SG grade": {
+   "companies": 62,
+   "actual_SG_share": 0.645,
+   "share_of_companies": 0.517
+  },
+  "2 IG grade, screen alert": {
+   "companies": 22,
+   "actual_SG_share": 0.318,
+   "share_of_companies": 0.183
+  },
+  "3 IG grade, no alert": {
+   "companies": 36,
+   "actual_SG_share": 0.222,
+   "share_of_companies": 0.3
+  }
+ },
+ "cost_rule_companies": [
+  {
+   "k": 2,
+   "threshold": 0.5,
+   "companies flagged": 0.492,
+   "SG caught": 0.764
+  },
+  {
+   "k": 4,
+   "threshold": 0.25,
+   "companies flagged": 0.775,
+   "SG caught": 0.891
+  },
+  {
+   "k": 10,
+   "threshold": 0.1,
+   "companies flagged": 1.0,
+   "SG caught": 1.0
+  }
+ ]
+}

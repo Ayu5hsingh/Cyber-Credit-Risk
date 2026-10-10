@@ -1,0 +1,16 @@
+# Python >= 3.13 (tested on 3.13.16). scikit-learn must be >= 1.8.
+# LightGBM on macOS needs libomp (brew install libomp, or the copy shipped in scikit-learn's wheel; see README, Run).
+numpy==2.3.5
+pandas==2.3.3
+scipy==1.16.3
+scikit-learn==1.8.0
+lightgbm==4.6.0
+shap==0.50.0
+matplotlib==3.10.8
+seaborn==0.13.2
+nbformat==5.10.4
+nbclient==0.10.4
+nbconvert==7.17.1
+ipykernel==7.1.0
+jupyter_client==8.10.0
+cloudpickle==3.1.2
