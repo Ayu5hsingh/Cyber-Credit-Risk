@@ -241,7 +241,7 @@
    "BBB vs BB AUC": 0.683
   },
   "spline logistic, C=0.03": {
-   "AUC": 0.814,
+   "AUC": 0.813,
    "fold sd": 0.033,
    "vs champion": 0.001,
    "sd of difference": 0.012,
@@ -273,7 +273,7 @@
    "vs champion": -0.015,
    "sd of difference": 0.016,
    "company-weighted": 0.785,
-   "PR-AUC": 0.763,
+   "PR-AUC": 0.762,
    "BBB vs BB AUC": 0.683
   }
  },
@@ -487,16 +487,6 @@
    "AUC (holdout, exploratory)": 0.695,
    "small": false
   },
-  "Capital Goods": {
-   "companies": 60,
-   "firm_years": 206,
-   "SG share": 0.383,
-   "AUC (CV)": 0.834,
-   "mean P(SG) (CV)": 0.403,
-   "holdout companies": 11,
-   "AUC (holdout, exploratory)": 0.877,
-   "small": false
-  },
   "Consumer Services": {
    "companies": 60,
    "firm_years": 189,
@@ -505,6 +495,16 @@
    "mean P(SG) (CV)": 0.555,
    "holdout companies": 21,
    "AUC (holdout, exploratory)": 0.64,
+   "small": false
+  },
+  "Capital Goods": {
+   "companies": 60,
+   "firm_years": 206,
+   "SG share": 0.383,
+   "AUC (CV)": 0.834,
+   "mean P(SG) (CV)": 0.403,
+   "holdout companies": 11,
+   "AUC (holdout, exploratory)": 0.877,
    "small": false
   },
   "Technology": {
@@ -1696,8 +1696,8 @@
   ],
   "training_companies": 469,
   "training_firm_years": 1619,
-  "data_sha256": "7e977ab740968110aa922895c01108d1af28659cedaf67c43e5807ca1c9ccb8c",
-  "python": "3.13.16",
+  "data_sha256": "a29071b7164f20b1a98426846f3024efff837904f273442b3c8fd539684e4e2b",
+  "python": "3.13.9",
   "packages": {
    "numpy": "2.3.5",
    "pandas": "2.3.3",
