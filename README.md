@@ -6,6 +6,7 @@ The data hold financial statements and ratings, but no incidents, so the inciden
 1. **The engine:** a candidate screening model that estimates, for any company with financial statements, the calibrated probability of a speculative-grade (SG) rating, P(SG). It works for rated companies and for unrated ones (suppliers, vendors, private firms), where no rating exists to look up.
 2. **Cyber headroom:** a stress test of how large an incident, as a share of revenue, each company could absorb before it lands on the review list (or before the model would classify it as SG). It is a model-based scenario, not a downgrade forecast.
 3. **The rare-event view:** IG → SG migration, judged with rare-event measures.
+4. **Internal grades:** P(SG) grouped into five internal grades (IG-1, IG-2, XO, SG-1, SG-2), so the cyber result also reads as a migration table: how many companies drop a grade after an incident.
 
 It is a triage screen for analysts, not a rating opinion and not a probability of default. It is validated on rated companies it never saw; whether it holds for unrated private firms still needs its own validation. The slide outline for the presentation is in [`docs/presentation_outline.md`](docs/presentation_outline.md).
 
@@ -24,6 +25,17 @@ All numbers come from `results/numbers_of_record.json` (model), `results/eda_num
 | To a speculative-grade classification | at M&S scale, **3 of 162** would reach the model's classification at calibrated P(SG) ≥ 0.5 (exact 95% interval 0.4%–5.3%; not an agency decision); median headroom to it 10.17% |
 | By sector (descriptive) | median headroom from 4.1% (Capital Goods, 26 companies) to 7.0% (Consumer Non-Durables, 15) across sectors with 10+ companies; the intervals overlap, so no sector is clearly more exposed. Table in `03_modelling.ipynb` §10 |
 | Check on the 120 holdout companies | median 4.80% [3.27%, 6.69%]; 7 of 29 at M&S scale (10%–44%); consistent with the result above |
+
+**Internal grades and the cyber migration table** (`03_modelling.ipynb` §11, figure `fig_cyber_migration.png`)
+
+| | |
+|---|---|
+| Grades | five, by calibrated P(SG): **IG-1** below 0.2 (strong), **IG-2** 0.2–0.4 (solid), **XO** 0.4–0.6 (crossover, the BBB/BB border), **SG-1** 0.6–0.8 (weak), **SG-2** 0.8 and above (very weak). Cut-offs from monotone optimal binning on out-of-fold training scores (optimum 0.202 / 0.406 / 0.598 / 0.794, rounded). A screening scale: regulatory master scales need at least 7 grades plus default, and here the SG rate stops rising grade by grade on the holdout with 6 or 7 grades |
+| Checks on the holdout | SG rate by grade 0.18, 0.28, 0.38, 0.72, 0.84, rising every grade; every grade passes the one-sided Jeffreys test; AUC on the grades 0.757 against 0.761 on P(SG); ECB Herfindahl index 0.058 (0 = evenly spread) |
+| Portfolio (575 companies) | 117 / 154 / 116 / 98 / 90 companies. Named after the decision, not agency letters: IG-1 companies are mostly rated BBB (48%) and A (33%), SG-2 mostly B (43%) |
+| Cyber migration | at M&S scale, **31.0% of companies drop at least one grade and 3.1% (18 companies) drop two or more**; Merck scale 17.4% (3 drop two); Norsk Hydro scale 5.6% (none drop two). XO is the most fragile grade: 44% of XO companies drop a grade at M&S scale |
+| A normal year, for reference | the same company a year later: 51% keep their grade, 27% go down, 22% go up (748 company-years). An M&S-scale incident is about as large as a normal year's downgrades, but all in one direction |
+| Rule on top of the model | negative equity: SG-1 or worse. It moves 16 companies the model put in IG-2 or XO (mean P(SG) 0.41, 62% rated SG). A second candidate, losses with negative operating cash flow, never changed a grade and is not adopted |
 
 **The engine and the rare-event view**
 
@@ -55,6 +67,7 @@ Intervals in brackets are 95% company-bootstrap intervals. Crossing counts use e
 - **Liquidity.** Higher liquidity ratios read as riskier. Market access is a possible explanation; the data cannot identify the mechanism.
 - **Calibration is approximate:** fitted on fold models trained on 80% of the companies, with companies weighted by their number of firm-years. Read P(SG) as a ranking with an approximate level.
 - **Cyber headroom is a scenario.** Its intervals leave out uncertainty in the model, the accounting assumptions and how an incident's cost lands. The debt-funded shock raises the debt ratio but holds debt/equity and the equity multiplier fixed (to keep the score monotone), so it understates the leverage effect. Liquidity and sector are not shocked.
+- **Five grades, not seven.** The internal scale is a screening scale, below the 7 grades plus default that regulatory master scales require; these data support five. Grades near a cut-off are sensitive: 58% of training companies keep their grade across the three CV seeds.
 - **What the data lack:** firm size, default outcomes (the labels are agency opinions) and any cyber data.
 
 ## Appendix: secondary outputs
@@ -79,7 +92,8 @@ Kept in the notebook appendix, not in the main story. **Why the main product is 
 | Prediction drift | P(SG) distribution, share in the screen, review-list size | real credit change or a model/data problem? |
 | Performance, when labels arrive | AUC, PR-AUC, catch rate at the review budget, by sector | compare with reference performance and its uncertainty |
 | Calibration | calibration slope and intercept, Brier, predicted vs observed SG share | recalibrate if the ranking holds but the level drifts |
-| Business effectiveness | review volume, analyst overrides, findings, missed risky companies | revisit the review policy |
+| Internal grades | SG rate by grade (still rising grade by grade?), Jeffreys test per grade, concentration (Herfindahl), moves between grades against the normal year (MWB) | re-fit the cut-offs with the same binning if a grade's level drifts; move toward 7 grades as data allow |
+| Business effectiveness | review volume, analyst overrides (rate, direction, later outcome), findings, missed risky companies | revisit the review policy; many overrides in one direction mean the model needs fixing |
 
 - **Drift triggers investigation, not retraining.** In 2015–16 Energy inputs and scores shifted sharply, and the model tracked the shock: drift is not failure. Retraining follows sustained deterioration in ranking or catch rate, and a retrained challenger replaces the model only after it beats it on later-period data and on the relevant sectors.
 - **Labels may never arrive for unrated firms.** Agree a validation source up front: later ratings where they appear, structured analyst assessments, or defaults as a separate check.
@@ -88,6 +102,7 @@ Kept in the notebook appendix, not in the main story. **Why the main product is 
 
 ## How to read it
 - **Grades, not notches.** The data carry letter grades only (AAA … D); a notch is one step on the modified rating scale (BBB− → BB+ is one notch), so we claim no notch precision.
+- **Internal grades are not ratings.** IG-1 … SG-2 are named after the IG/SG decision, not agency letters, because the model cannot place a company on the exact letter; each grade carries its observed SG rate.
 - **A credit rating** is an opinion on relative credit risk: how likely a company is to default and how much lenders would lose if it did. The model estimates the probability of a speculative-grade rating, not a probability of default.
 - **What it is for:** a transparent screen trained on rating labels, with a cyber stress layer. It complements a probability-of-default (PD) model rather than replacing it.
 - **In deployment**, rank companies by P(SG) × criticality (spend, data access, single point of failure); the model provides the first factor.
@@ -95,7 +110,7 @@ Kept in the notebook appendix, not in the main story. **Why the main product is 
 - **Quoting:** quote numbers as computed, to two decimals; do not round ranges up.
 
 ## Using the saved model
-`03_modelling.ipynb` saves the fitted pipeline, calibrator, screen, input schema and version metadata as `models/shadow_rating.pkl`. Unpickling runs code, so load only a copy you trust.
+`03_modelling.ipynb` saves the fitted pipeline, calibrator, screen, internal grade scale, input schema and version metadata as `models/shadow_rating.pkl`. Unpickling runs code, so load only a copy you trust.
 
 **Input: processed rows, not raw data.** `score()` expects the output of `02_data_cleaning.ipynb` (cleaned rows with the rebuilt ratios and flags, like `data/processed/firm_years_clean.csv`); cleaning is not part of the artifact. It rejects missing or non-numeric input columns, infinite values and flags other than 0/1, and warns when a sector was not seen in training (that row is scored with no sector effect).
 ```python
@@ -105,7 +120,8 @@ firm_years = pd.read_csv("data/processed/firm_years_clean.csv", parse_dates=["Da
 firm_years = firm_years[firm_years.Sector != "Finance"]                                   # Finance is out of scope
 scores = model.score(firm_years)
 scores.p_sg, scores.screen             # calibrated P(SG) and the screen flag
-model.metadata                         # model size, screen, training data hash, package versions
+scores.grade, scores.grade_rule        # internal grade (IG-1 … SG-2) and whether the negative-equity rule set it
+model.metadata                         # model size, screen, grade cut-offs, training data hash, package versions
 ```
 
 ## Layout
@@ -119,7 +135,8 @@ notebooks/
   02_data_cleaning.ipynb  row-wise cleaning and features; writes data/processed/
   03_modelling.ipynb      validation, model size, calibration, review budget, sectors, stability, SHAP, out of time,
                           migration as a rare event, cyber headroom (holdout check, sensitivity, every company cross-fitted,
-                          by sector), the saved model; appendix: the full-rating attempt, tiers, cost rule
+                          by sector), internal grades and the cyber migration table, the saved model;
+                          appendix: the full-rating attempt, tiers, cost rule
 models/               shadow_rating.pkl, the scoring artifact (03)
 results/              numbers_of_record.json (03), eda_numbers.json (01), cleaning_numbers.json (02), holdout_companies.csv
 figures/              figures written by the notebooks (eda_* from 01, fig_* from 03)
