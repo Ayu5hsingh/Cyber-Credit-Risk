@@ -16,5 +16,40 @@
   "dso_zero": 194
  },
  "n_features": 21,
- "n_flags": 6
+ "n_flags": 6,
+ "repairs": {
+  "returnOnEquity": {
+   "rows": 340,
+   "rebuilt": 276,
+   "left_blank": 64
+  },
+  "companyEquityMultiplier": {
+   "rows": 101
+  },
+  "cashPerShare": {
+   "rows": 1114
+  },
+  "quickRatio": {
+   "rows": 132
+  },
+  "cashRatio": {
+   "rows": 44
+  },
+  "grossProfitMargin": {
+   "rows": 414
+  },
+  "freeCashFlowOperatingCashFlowRatio": {
+   "rows": 66
+  }
+ },
+ "misleading": {
+  "gross_margin_99_plus": 414,
+  "gross_margin_99_plus_by_sector": {
+   "Energy": 138,
+   "Public Utilities": 105,
+   "Consumer Services": 45
+  },
+  "fcf_ocf_above_1_share_ocf_positive": 0.046,
+  "fcf_ocf_above_1_share_ocf_negative": 0.879
+ }
 }

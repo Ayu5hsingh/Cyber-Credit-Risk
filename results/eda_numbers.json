@@ -3,6 +3,11 @@
  "raw_companies": 593,
  "duplicate_rows": 405,
  "duplicate_share": 0.166,
+ "corrupt_row_typical_ratio": 434518,
+ "other_rows_typical_ratio_median": 0.58,
+ "other_rows_typical_ratio_max": 4.4,
+ "corrupt_row_ratios_outside_p01_p99": 23,
+ "other_rows_ratios_outside_p01_p99_max": 10,
  "clean_firm_years": 2028,
  "clean_companies": 592,
  "firm_years_per_company_max": 7,
@@ -22,6 +27,9 @@
   "C": 2,
   "D": 1
  },
+ "ig_pairs": 617,
+ "ig_pairs_crossed": 39,
+ "ig_pairs_crossed_share": 0.063,
  "agency_firm_years": {
   "Rating agency 1": 603,
   "Rating agency 2": 100,

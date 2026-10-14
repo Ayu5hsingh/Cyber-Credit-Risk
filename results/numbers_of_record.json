@@ -297,6 +297,37 @@
   "slope": 1.024,
   "intercept": -0.004
  },
+ "artifact": {
+  "path": "models/shadow_rating.pkl",
+  "model": "LightGBM, monotone",
+  "trees": 200,
+  "leaves": 5,
+  "screen_calibrated_psg": 0.306,
+  "grade_cuts": [
+   0.2,
+   0.4,
+   0.6,
+   0.8
+  ],
+  "grade_names": [
+   "IG-1",
+   "IG-2",
+   "XO",
+   "SG-1",
+   "SG-2"
+  ],
+  "training_companies": 469,
+  "training_firm_years": 1619,
+  "data_sha256": "7e977ab740968110aa922895c01108d1af28659cedaf67c43e5807ca1c9ccb8c",
+  "python": "3.13.16",
+  "packages": {
+   "numpy": "2.3.5",
+   "pandas": "2.3.3",
+   "sklearn": "1.8.0",
+   "lightgbm": "4.6.0",
+   "cloudpickle": "3.1.2"
+  }
+ },
  "calibration_holdout": {
   "raw score": {
    "slope": 0.905,
@@ -304,10 +335,10 @@
     0.65,
     1.224
    ],
-   "intercept": -0.168,
-   "intercept_ci": [
-    -0.595,
-    0.246
+   "in_the_large": -0.156,
+   "in_the_large_ci": [
+    -0.58,
+    0.284
    ],
    "brier": 0.189
   },
@@ -317,10 +348,10 @@
     0.635,
     1.196
    ],
-   "intercept": -0.165,
-   "intercept_ci": [
-    -0.591,
-    0.249
+   "in_the_large": -0.149,
+   "in_the_large_ci": [
+    -0.578,
+    0.294
    ],
    "brier": 0.189
   },
@@ -420,10 +451,10 @@
    0.655,
    1.381
   ],
-  "calibration_intercept": -0.273,
-  "intercept_ci": [
-   -0.732,
-   0.15
+  "calibration_in_the_large": -0.277,
+  "in_the_large_ci": [
+   -0.688,
+   0.155
   ],
   "brier": 0.185,
   "quintiles": {
@@ -1380,7 +1411,13 @@
    0.668,
    0.905
   ],
-  "fit_kept_vs_optimum": 0.973
+  "fit_kept_vs_optimum": 0.973,
+  "grade_count_check_training": {
+   "4": 1.0,
+   "5": 0.96,
+   "6": 0.84,
+   "7": 0.76
+  }
  },
  "grade_scale_holdout": {
   "by_grade": {
@@ -1656,14 +1693,14 @@
  "grade_rules": {
   "candidates": {
    "negative equity": {
-    "fires (firm-years)": 100.0,
-    "would move (firm-years)": 25.0,
-    "would move (companies)": 15.0,
-    "their mean P(SG)": 0.41,
-    "their actual SG rate": 0.56
+    "fires (firm-years)": 84.0,
+    "would move (firm-years)": 23.0,
+    "would move (companies)": 13.0,
+    "their mean P(SG)": 0.416,
+    "their actual SG rate": 0.565
    },
    "losses and negative operating cash flow": {
-    "fires (firm-years)": 32.0,
+    "fires (firm-years)": 28.0,
     "would move (firm-years)": 0.0,
     "would move (companies)": 0.0,
     "their mean P(SG)": null,
@@ -1674,37 +1711,6 @@
   "holdout_auc_model": 0.756,
   "holdout_auc_with_rule": 0.757,
   "holdout_moved": 2
- },
- "artifact": {
-  "path": "models/shadow_rating.pkl",
-  "model": "LightGBM, monotone",
-  "trees": 200,
-  "leaves": 5,
-  "screen_calibrated_psg": 0.306,
-  "grade_cuts": [
-   0.2,
-   0.4,
-   0.6,
-   0.8
-  ],
-  "grade_names": [
-   "IG-1",
-   "IG-2",
-   "XO",
-   "SG-1",
-   "SG-2"
-  ],
-  "training_companies": 469,
-  "training_firm_years": 1619,
-  "data_sha256": "7e977ab740968110aa922895c01108d1af28659cedaf67c43e5807ca1c9ccb8c",
-  "python": "3.13.16",
-  "packages": {
-   "numpy": "2.3.5",
-   "pandas": "2.3.3",
-   "sklearn": "1.8.0",
-   "lightgbm": "4.6.0",
-   "cloudpickle": "3.1.2"
-  }
  },
  "band": {
   "band (CV)": {
