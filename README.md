@@ -8,7 +8,7 @@ The data hold financial statements and ratings, but no incidents, so the inciden
 3. **The rare-event view:** IG → SG migration, judged with rare-event measures.
 4. **Internal grades:** P(SG) grouped into five internal grades (IG-1, IG-2, XO, SG-1, SG-2), so the cyber result also reads as a migration table: how many companies drop a grade after an incident.
 
-It is a triage screen for analysts, not a rating opinion and not a probability of default. It is validated on rated companies it never saw; whether it holds for unrated private firms still needs its own validation. The slide outline for the presentation is in [`docs/presentation_outline.md`](docs/presentation_outline.md).
+It is a triage screen for analysts, not a rating opinion and not a probability of default. It is validated on rated companies it never saw; whether it holds for unrated private firms still needs its own validation.
 
 **Recommended policy: the review budget.** Analysts review the riskiest 30% of companies. The review screen (calibrated P(SG) ≥ 0.31) gives cyber headroom a line to measure distance to.
 
@@ -71,7 +71,7 @@ Intervals in brackets are 95% company-bootstrap intervals. Crossing counts use e
 - **What the data lack:** firm size, default outcomes (the labels are agency opinions) and any cyber data.
 
 ## Appendix: secondary outputs
-Kept in the notebook appendix, not in the main story. **Why the main product is IG/SG and not the full rating** (what was tested, how it did, limitations, what would improve it): [`docs/why_ig_sg_not_rating.md`](docs/why_ig_sg_not_rating.md).
+Kept in the notebook appendix, not in the main story.
 
 | | |
 |---|---|
@@ -140,11 +140,7 @@ notebooks/
 models/               shadow_rating.pkl, the scoring artifact (03)
 app/                  the cyber stress-test app (Streamlit): engine.py, app.py, check_engine.py, run.sh
 results/              numbers_of_record.json (03), eda_numbers.json (01), cleaning_numbers.json (02), holdout_companies.csv
-figures/              figures written by the notebooks (eda_* from 01, fig_* from 03)
-figures/slides/       slide versions of the data findings, one color rule for the deck (01 section 15; flags.png from 02)
-docs/                 presentation_outline.md: the 20-minute slide outline, with speaker notes and Q&A
-                      slides_segments_1_2.md: business case and data slides, each with its visual, notes and standards
-                      why_ig_sg_not_rating.md: why the model predicts IG vs SG and not the full rating
+figures/              figures written by the notebooks when run (eda_* from 01, fig_* from 03); not kept in the repository
 ```
 
 ## Run
