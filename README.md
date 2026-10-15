@@ -23,10 +23,10 @@ All numbers come from `results/numbers_of_record.json` (model), `results/eda_num
 | Cyber headroom, rated IG | the median company absorbs **6.52%** of revenue [5.50%, 7.19%] before landing on the review list |
 | At reported incident sizes | Norsk Hydro scale (0.40% of revenue): 4 of 169 land on the review list. Maersk, MGM, UnitedHealth scale (0.68%–0.81%): 6–8 of 169. Merck (1.15%): 13 of 169. **M&S (2.17%, estimated, gross of insurance): 26 of 169** (15%, exact 95% interval 10%–22%) |
 | To a speculative-grade classification | at M&S scale, **1 of 169** would reach the model's classification at calibrated P(SG) ≥ 0.5 (exact 95% interval 0.01%–3.3%; not an agency decision); median headroom to it 10.23% |
-| By sector (descriptive) | median headroom from 4.74% (Capital Goods, 26 companies) to 7.81% (Technology, 19) across sectors with 10+ companies. Only one pair of intervals does not overlap: Capital Goods [3.39%, 6.25%] sits below Public Utilities [6.49%, 8.05%]; with seven sectors compared and no correction for that, read it as a lead, not a finding. Table in `03_modelling.ipynb` §11 |
+| By sector (descriptive) | median headroom from 4.74% (Capital Goods, 26 companies) to 7.81% (Technology, 19) across sectors with 10+ companies. Only one pair of intervals does not overlap: Capital Goods [3.39%, 6.25%] sits below Public Utilities [6.49%, 8.05%]; with seven sectors compared and no correction for that, read it as a lead, not a finding. Table in `04_modelling.ipynb` §11 |
 | Check on the 123 holdout companies | median 5.47% [4.48%, 7.75%]; 6 of 30 at M&S scale (8%–39%); consistent with the result above |
 
-**Internal grades and the cyber migration table** (`03_modelling.ipynb` §12, figure `fig_cyber_migration.png`)
+**Internal grades and the cyber migration table** (`04_modelling.ipynb` §12, figure `fig_cyber_migration.png`)
 
 | | |
 |---|---|
@@ -50,7 +50,7 @@ All numbers come from `results/numbers_of_record.json` (model), `results/eda_num
 | Overfitting | AUC on training companies 0.91, CV 0.81, holdout 0.77 (the earlier 400 × 15 model: 1.00 / 0.81 / 0.75) |
 | Hardest boundary, BBB vs BB | AUC 0.70 (CV), 0.69 (holdout) |
 | Calibration (holdout) | approximate. Firm-years: slope 0.88 [0.64, 1.20], calibration-in-the-large −0.15 [−0.58, +0.29], Brier 0.19; the largest miss is the middle fifth (0.40 predicted vs 0.28 actual). One row per company: slope 0.95 [0.66, 1.38], calibration-in-the-large −0.28 [−0.69, +0.16]; the largest miss is the middle fifth (0.49 predicted vs 0.36 actual). Calibration-in-the-large is the intercept with the slope fixed at 1 (0 = right on average, below 0 = P(SG) runs high). Both intervals include zero, so there is no clear evidence of over- or under-prediction overall |
-| By sector (descriptive) | CV AUC from 0.72 (Public Utilities, 49 training companies) to 0.92 (Health Care, 43) across the 7 sectors with at least 30 training companies. Smaller sectors below that range: Consumer Durables 0.68 (16 companies), Finance 0.68 (14). CV uses firm-years and has no intervals; every holdout sector result is exploratory (5–21 companies each). Table in `03_modelling.ipynb` §7 |
+| By sector (descriptive) | CV AUC from 0.72 (Public Utilities, 49 training companies) to 0.92 (Health Care, 43) across the 7 sectors with at least 30 training companies. Smaller sectors below that range: Consumer Durables 0.68 (16 companies), Finance 0.68 (14). CV uses firm-years and has no intervals; every holdout sector result is exploratory (5–21 companies each). Table in `04_modelling.ipynb` §7 |
 | Stability (20 bootstrap refits; calibrator and screen threshold held fixed) | sensitivity to which companies were in training, given those choices, not the uncertainty of the whole pipeline. Per-company spread of P(SG): median sd 0.087, 90th percentile 0.126. 71% of holdout companies keep the same screen decision in at least 90% of refits; of the 36 less stable ones, 27 are within 0.10 of the screen (median distance 0.063, against 0.316 for the stable ones) |
 | Company-weighted training (challenger) | −0.001 AUC vs the champion (sd of the difference 0.011): no gain beyond noise, not adopted |
 | Out of time (exploratory) | trained on ratings dated up to 2014 (mostly 2012–14). Energy companies the model never saw, 2015–16: AUC 0.73 (19 companies; 2015: 0.66 on 10, 2016: 0.78 on 16). All sectors, new companies: 0.83. A nowcast: 2016 statements already show the crash |
@@ -110,7 +110,7 @@ Kept in the notebook appendix, not in the main story.
 - **Quoting:** quote numbers as computed, to two decimals; do not round ranges up.
 
 ## Using the saved model
-`03_modelling.ipynb` saves the fitted pipeline, calibrator, screen, internal grade scale, input schema and version metadata as `models/shadow_rating.pkl`. Unpickling runs code, so load only a copy you trust.
+`04_modelling.ipynb` saves the fitted pipeline, calibrator, screen, internal grade scale, input schema and version metadata as `models/shadow_rating.pkl`. Unpickling runs code, so load only a copy you trust.
 
 **Input: processed rows, not raw data.** `score()` expects the output of `02_data_cleaning.ipynb` (cleaned rows with the rebuilt ratios and flags, like `data/processed/firm_years_clean.csv`); cleaning is not part of the artifact. It rejects missing or non-numeric input columns, infinite values and flags other than 0/1, and warns when a sector was not seen in training (that row is scored with no sector effect).
 ```python
@@ -132,19 +132,20 @@ data/processed/       firm_years_clean.csv (2,028 firm-years), firm_years_naive.
 notebooks/
   01_eda.ipynb            the raw data and its problems (reads the raw CSV only)
   02_data_cleaning.ipynb  row-wise cleaning and features; writes data/processed/
-  03_modelling.ipynb      validation, model size, model choice; calibration, review screen, grade scale and the saved model
+  04_modelling.ipynb      validation, model size, model choice; calibration, review screen, grade scale and the saved model
                           (training companies only); the holdout, scored by the saved file: review budget, sectors, stability;
                           SHAP, out of time, migration as a rare event, cyber headroom (holdout check, sensitivity,
                           every company cross-fitted, by sector), internal grades on the holdout and the cyber migration table;
                           appendix: the full-rating attempt, tiers, cost rule
-models/               shadow_rating.pkl, the scoring artifact (03)
+models/               shadow_rating.pkl, the scoring artifact (04)
+cyber_credit/         shared code for the notebooks and the app: the incident shock (shock.py)
 app/                  the cyber stress-test app (Streamlit): engine.py, app.py, check_engine.py, run.sh
-results/              numbers_of_record.json (03), eda_numbers.json (01), cleaning_numbers.json (02), holdout_companies.csv
-figures/              figures written by the notebooks when run (eda_* from 01, fig_* from 03); not kept in the repository
+results/              numbers_of_record.json (04), eda_numbers.json (01), cleaning_numbers.json (02), holdout_companies.csv
+figures/              figures written by the notebooks when run (eda_* from 01, fig_* from 04); not kept in the repository
 ```
 
 ## Run
-Tested on Python 3.13.16 (macOS, Apple silicon) with the versions pinned in `requirements.txt`. scikit-learn must be ≥ 1.8 (earlier versions shuffle grouped splits differently). On macOS, LightGBM needs `libomp`: install it (`brew install libomp`) or point the loader at the copy shipped in scikit-learn's wheel, as below. Run the notebooks in order, 01 → 02 → 03:
+Tested on Python 3.13.16 (macOS, Apple silicon) with the versions pinned in `requirements.txt`. scikit-learn must be ≥ 1.8 (earlier versions shuffle grouped splits differently). On macOS, LightGBM needs `libomp`: install it (`brew install libomp`) or point the loader at the copy shipped in scikit-learn's wheel, as below. Run the notebooks in order, 01 → 02 → 04:
 ```bash
 pip install -r requirements.txt
 cd notebooks && \
@@ -152,9 +153,9 @@ export OMP_NUM_THREADS=1 LOKY_MAX_CPU_COUNT=1 && \
 export DYLD_FALLBACK_LIBRARY_PATH="$(python -c 'import sklearn, os; print(os.path.join(os.path.dirname(sklearn.__file__), ".dylibs"))')" && \
 jupyter nbconvert --to notebook --execute --inplace 01_eda.ipynb && \
 jupyter nbconvert --to notebook --execute --inplace 02_data_cleaning.ipynb && \
-jupyter nbconvert --to notebook --execute --inplace 03_modelling.ipynb
+jupyter nbconvert --to notebook --execute --inplace 04_modelling.ipynb
 ```
-01 and 02 take seconds; 03 takes 2–5 minutes (mostly the model-size grid). All three are deterministic, numbers and figures.
+01 and 02 take seconds; 04 takes 2–5 minutes (mostly the model-size grid). All three are deterministic, numbers and figures.
 
 ## The stress-test app
 Pick a company and one of four attack types: **operations shutdown** (days of lost sales), **data breach** (one-off costs, paid now or
@@ -163,13 +164,13 @@ provisioned), **billing / payments disruption** (direct costs plus collections s
 the page shows P(SG), internal grade, the SHAP drivers before and after, and **the line**: how big the attack can get before the company
 lands on the review list and before the model calls it SG, in days or % of revenue (and money, if a revenue figure is entered).
 
-- Every company is scored by the one of five cross-fitted models that never saw it, as in 03's every-company headroom; the models are
+- Every company is scored by the one of five cross-fitted models that never saw it, as in 04's every-company headroom; the models are
   refits of `models/shadow_rating.pkl`, so preprocessing, calibrator, screen and grade scale come from the saved file.
-- A paid, debt-funded data breach is exactly 03's shock, so the deck's numbers hold for it. The other attack types are app-only
+- A paid, debt-funded data breach is exactly 04's shock, so the deck's numbers hold for it. The other attack types are app-only
   explorations; the mapping from attack to ratios is an assumption, set out on the page.
 - Ratios the model is not monotone in (liquidity, days sales outstanding, turnover) are shown but held at today's value by default: the
   model reads more cash as riskier, so feeding a cash drain can make an attack look like an improvement. A toggle feeds them for Q&A.
-- `check_engine.py` checks that the app reproduces 03's headroom and migration numbers, that the breach equals 03's shock for all 592
+- `check_engine.py` checks that the app reproduces 04's headroom and migration numbers, that the breach equals 04's shock for all 592
   companies, and that P(SG) never falls as any attack grows.
 ```bash
 pip install -r app/requirements.txt

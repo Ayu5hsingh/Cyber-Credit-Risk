@@ -345,7 +345,7 @@ with t3:
 with t4:
     expl = eng.global_explanation()
     plt.close("all")
-    np.random.seed(0)   # shap shuffles dot order with NumPy's global generator (as in 03)
+    np.random.seed(0)   # shap shuffles dot order with NumPy's global generator (as in 04)
     shap.plots.beeswarm(expl, max_display=10, group_remaining_features=False, show=False)
     ax = plt.gca()
     rows = {t.get_text(): y for t, y in zip(ax.get_yticklabels(), ax.get_yticks())}
@@ -387,7 +387,7 @@ with st.expander("The ratios this attack changed", expanded=True):
 
 # ---------------- portfolio view ----------------
 with st.expander("Where this company sits among the 169 rated-IG companies (the deck's headroom curve)"):
-    ig = co[(co.SG == 0) & (co.p_sg_cf < eng.screen)]   # 03's every-company view (cross-fitted), as in the deck
+    ig = co[(co.SG == 0) & (co.p_sg_cf < eng.screen)]   # 04's every-company view (cross-fitted), as in the deck
     grid = np.linspace(0, 0.08, 321)
     share = [(ig.headroom_screen_cf <= v).mean() * 100 for v in grid]
     fig3 = go.Figure(go.Scatter(x=grid * 100, y=share, mode="lines", line=dict(color=BLUE, width=2),

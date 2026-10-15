@@ -1,4 +1,4 @@
-"""Check that the app's engine reproduces 03's cross-fitted numbers (results/numbers_of_record.json). Run from the repo root:
+"""Check that the app's engine reproduces 04's cross-fitted numbers (results/numbers_of_record.json). Run from the repo root:
     .venv/bin/python app/check_engine.py
 """
 import json
@@ -32,10 +32,10 @@ for a in ANCHORS.itertuples():
     drop = float(np.mean(after > co.grade_cf.to_numpy()))
     assert round(drop, 3) == NOR["cyber_migration"]["by_incident"][a.incident]["drop 1+ grade"], (a.incident, drop)
 
-print(f"engine reproduces 03: {got}; median headroom to the screen {np.median(ig.headroom_screen_cf):.2%}, "
+print(f"engine reproduces 04: {got}; median headroom to the screen {np.median(ig.headroom_screen_cf):.2%}, "
       f"M&S-scale crossings {int((ig.headroom_screen_cf <= 0.0217).sum())} of {len(ig)}; grade drops match for all six incidents")
 
-# The holdout companies, scored by the saved model as on the slides, reproduce 03's holdout check.
+# The holdout companies, scored by the saved model as on the slides, reproduce 04's holdout check.
 ho = co[co.holdout]
 assert len(ho) == NOR["headroom_companies"] and np.allclose(ho.p_sg, eng.shadow.score(ho).p_sg)
 ho_ig = ho[(ho.p_sg < eng.screen) & (ho.SG == 0)]
@@ -43,9 +43,9 @@ want_ho = NOR["headroom_to_screen_rated_ig"]
 assert len(ho_ig) == want_ho["companies"] and round(float(np.median(ho_ig.headroom_screen)), 4) == want_ho["median"]
 assert int((ho_ig.headroom_screen <= 0.0217).sum()) == want_ho["count_le_ms"]
 print(f"holdout: {len(ho)} companies scored by the saved model; {len(ho_ig)} rated IG below the screen, median headroom "
-      f"{np.median(ho_ig.headroom_screen):.2%}, {int((ho_ig.headroom_screen <= 0.0217).sum())} cross at M&S scale (as in 03)")
+      f"{np.median(ho_ig.headroom_screen):.2%}, {int((ho_ig.headroom_screen <= 0.0217).sum())} cross at M&S scale (as in 04)")
 
-# The attack types (app only): a paid, debt-funded data breach is 03's shock exactly; no attack ever lowers P(SG).
+# The attack types (app only): a paid, debt-funded data breach is 04's shock exactly; no attack ever lowers P(SG).
 import pandas as pd  # noqa: E402
 from engine import Attack  # noqa: E402
 
@@ -53,8 +53,8 @@ model_cols = eng.features + eng.flags
 for name in co.index:
     f = int(co.loc[name, "fold"])
     before, after, fed, _, fold = eng.attacked(name, Attack(cost=0.0217))
-    ref03 = incident_shock(before, 0.0217, eng.folds[f].ref)
-    pd.testing.assert_frame_equal(fed[model_cols], ref03[model_cols], check_dtype=False)
+    ref04 = incident_shock(before, 0.0217, eng.folds[f].ref)
+    pd.testing.assert_frame_equal(fed[model_cols], ref04[model_cols], check_dtype=False)
     _, after0, fed0, _, _ = eng.attacked(name, Attack())
     pd.testing.assert_frame_equal(after0[model_cols], before[model_cols], check_dtype=False)   # size zero changes nothing
 
@@ -85,5 +85,5 @@ for kind, attack in defaults.items():
         top = a.max_scale()
         bad = [n for n in co.index if (np.diff(eng.attack_curve(n, a, scales * top)) < -1e-9).any()]
         assert not bad, (kind, funding, bad[:5])
-print("attack types: a paid, debt-funded breach (25% tax, no insurance) equals 03's shock for all 592 companies; size zero changes nothing;"
+print("attack types: a paid, debt-funded breach (25% tax, no insurance) equals 04's shock for all 592 companies; size zero changes nothing;"
       " with the liquidity toggle off, P(SG) never falls as any attack grows (5 attack set-ups, debt- or cash-funded)")

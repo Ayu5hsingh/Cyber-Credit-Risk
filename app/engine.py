@@ -1,12 +1,13 @@
-"""Engine for the cyber stress-test app: the cross-fitted models of 03 §11, the incident shock, headroom and SHAP.
+"""Engine for the cyber stress-test app: the cross-fitted models of 04 §11, the incident shock, headroom and SHAP.
 
 Every company is scored by a model that never saw it: the 123 holdout companies by the saved model (models/shadow_rating.pkl),
-as in 03's holdout section and on the slides; the other companies by the one of five cross-fitted fold models that left them out,
-as in 03 ("Cyber headroom for every company"). The fold models are refits of the saved pipeline, so preprocessing, model size,
+as in 04's holdout section and on the slides; the other companies by the one of five cross-fitted fold models that left them out,
+as in 04 ("Cyber headroom for every company"). The fold models are refits of the saved pipeline, so preprocessing, model size,
 calibrator, screen and grade scale all come from that file. app/check_engine.py checks both against results/.
 """
 from dataclasses import dataclass, replace
 from pathlib import Path
+import sys
 import warnings
 
 import cloudpickle
@@ -21,9 +22,9 @@ warnings.filterwarnings("ignore", message=".*TreeExplainer shap values output ha
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA, MODELS = ROOT / "data" / "processed", ROOT / "models"
+sys.path.insert(0, str(ROOT))
+from cyber_credit.shock import MAX_COST, TAX, assets_over_capital_employed, fit_reference, incident_shock  # noqa: E402,F401
 
-TAX = 0.25        # flat tax rate on the cost (03 §11)
-MAX_COST = 0.30   # largest cost searched, share of revenue (03 §11)
 CALL = 0.5        # a model classification as SG
 
 ANCHORS = pd.DataFrame([
@@ -35,7 +36,7 @@ ANCHORS = pd.DataFrame([
     ("Marks & Spencer", 2025, 0.0217, "Ransomware via social engineering; online orders paused for weeks", "~GBP 300m operating profit / GBP 13.8bn revenue, estimated, gross of insurance"),
 ], columns=["incident", "year", "share_of_revenue", "attack", "basis"])
 
-LABELS = {   # as on the slides (03 §8)
+LABELS = {   # as on the slides (04 §8)
     "currentRatio": "Current ratio", "quickRatio": "Quick ratio", "cashRatio": "Cash ratio", "daysOfSalesOutstanding": "Days sales outstanding",
     "netProfitMargin": "Net profit margin", "pretaxProfitMargin": "Pre-tax margin", "grossProfitMargin": "Gross margin",
     "operatingProfitMargin": "Operating margin", "returnOnAssets": "Return on assets", "returnOnCapitalEmployed": "Return on capital employed",
@@ -53,50 +54,10 @@ def label(column):
     return LABELS.get(column, column.replace("Sector=", "Sector: "))
 
 
-# --- the shock, as in 03 §11 (kept identical; check_engine.py reproduces the notebook's headroom and migration numbers) ---
-
-def fit_reference(frame):
-    """Training-set constants the shock needs: TA/CE median, FCF/OCF floor, equity-multiplier median."""
-    return {"tace": float(assets_over_capital_employed(frame).median()),
-            "fcf_floor": float(frame.freeCashFlowOperatingCashFlowRatio.quantile(0.01)),
-            "equity_multiplier": float(frame.companyEquityMultiplier.median())}
+# --- the shock: cyber_credit/shock.py, shared with 04_modelling §11 (check_engine.py reproduces the notebook's numbers) ---
 
 
-def assets_over_capital_employed(frame):
-    """Total assets / capital employed per row, implied by ROCE / (EBIT margin x asset turnover)."""
-    k = frame.returnOnCapitalEmployed / (frame.ebitPerRevenue * frame.assetTurnover)
-    return k.where((k > 0.8) & (k < 5))
-
-
-def incident_shock(frame, cost, ref, debt_funded=True, tax=TAX):
-    """Charge an incident cost (share of revenue, scalar or one per row) to each firm's ratios, row by row."""
-    d = frame.copy()
-    cost = np.broadcast_to(np.asarray(cost, dtype=float), len(d))
-    turnover = d.assetTurnover.clip(lower=0)
-    after_tax = cost - tax * np.minimum(cost, d.pretaxProfitMargin.fillna(0).clip(lower=0))  # shield only on existing profit
-
-    for col in ["pretaxProfitMargin", "operatingProfitMargin", "ebitPerRevenue"]:
-        d[col] = d[col] - cost
-    d["netProfitMargin"] -= after_tax
-    d["operatingCashFlowSalesRatio"] -= after_tax
-    d["returnOnAssets"] -= after_tax * turnover
-    d["returnOnCapitalEmployed"] -= cost * turnover * assets_over_capital_employed(frame).fillna(ref["tace"])
-    d["returnOnEquity"] -= after_tax * turnover * d.companyEquityMultiplier.fillna(ref["equity_multiplier"]).clip(lower=0)
-    if debt_funded:
-        d["debtRatio"] += after_tax * turnover   # new debt = after-tax cost
-
-    old = frame.freeCashFlowOperatingCashFlowRatio   # FCF/OCF with capex fixed, floored once cash flow is gone
-    capex = (1 - old) * frame.operatingCashFlowSalesRatio
-    ocf = d.operatingCashFlowSalesRatio
-    new = (1 - capex / ocf.where(ocf > 1e-6)).fillna(ref["fcf_floor"]).clip(lower=ref["fcf_floor"])
-    d["freeCashFlowOperatingCashFlowRatio"] = np.where(old.isna(), np.nan, np.minimum(old, new.where(cost > 0, old)))
-
-    d["roe_negative"] = ((d.roe_negative == 1) | (d.returnOnEquity < 0)).astype(int)
-    d["ocf_negative"] = ((d.ocf_negative == 1) | (d.operatingCashFlowSalesRatio < 0)).astype(int)
-    return d
-
-
-# --- attack types: which ratios each attack moves, with the accounting kept consistent (app only, not in 03) ---
+# --- attack types: which ratios each attack moves, with the accounting kept consistent (app only, not in 04) ---
 
 ATTACKS = {
     "Operations shutdown": "Ransomware stops plants, logistics or stores: sales are lost for some days while costs carry on.",
@@ -140,7 +101,7 @@ def current_liabilities(frame):
 
 def attack_shock(frame, attack, ref, gross_margin, liabilities):
     """Apply an attack to each firm's ratios. All amounts are per unit of a normal year's revenue; per-row arrays are allowed for
-    every channel. With only `cost`, paid and debt-funded, it equals incident_shock (03 §11). Returns (shocked frame, impacts)."""
+    every channel. With only `cost`, paid and debt-funded, it equals incident_shock (04 §11). Returns (shocked frame, impacts)."""
     d, n = frame.copy(), len(frame)
     arr = lambda x: np.broadcast_to(np.asarray(x, dtype=float), n)
     L, c, delay, capex = np.minimum(arr(attack.lost), 0.9), arr(attack.cost), arr(attack.delay), arr(attack.capex)
@@ -148,7 +109,7 @@ def attack_shock(frame, attack, ref, gross_margin, liabilities):
 
     turnover = frame.assetTurnover.clip(lower=0)
     assets = (1 / turnover.where(turnover > 0)).to_numpy()
-    g = np.clip(np.asarray(gross_margin, dtype=float), 0.05, 1.0)   # profit lost per unit of sales lost (as 03's outage days)
+    g = np.clip(np.asarray(gross_margin, dtype=float), 0.05, 1.0)   # profit lost per unit of sales lost (as 04's outage days)
 
     lost_profit, charged = L * g * kept, c * kept
     pnl = lost_profit + charged                                                        # pre-tax hit
@@ -159,7 +120,7 @@ def attack_shock(frame, attack, ref, gross_margin, liabilities):
     receivables_build = delay / 365 * sales
     ocf_hit = cash_pnl + receivables_build
 
-    # margins and cash flow per unit of a normal year's revenue, as in 03: the lost profit is charged like a cost, so an
+    # margins and cash flow per unit of a normal year's revenue, as in 04: the lost profit is charged like a cost, so an
     # attack can never lift a margin; the lost sales themselves show in asset turnover below
     for col in ["pretaxProfitMargin", "operatingProfitMargin", "ebitPerRevenue"]:
         d[col] = frame[col] - pnl
@@ -180,7 +141,7 @@ def attack_shock(frame, attack, ref, gross_margin, liabilities):
     new_liabilities = outflow - cash_used + provision
     new_assets = capex + receivables_build - cash_used + deferred_tax
     debt_ratio = np.fmax((frame.debtRatio * assets + new_liabilities) / (assets + new_assets), frame.debtRatio)
-    # with negative equity (debt ratio >= 1), new assets matched by new debt would lower the ratio: there, as in 03, only the
+    # with negative equity (debt ratio >= 1), new assets matched by new debt would lower the ratio: there, as in 04, only the
     # new liabilities count, so the ratio never falls as the attack grows
     d["debtRatio"] = np.where(frame.debtRatio < 1, debt_ratio, frame.debtRatio + new_liabilities * turnover)
 
@@ -230,7 +191,7 @@ class Engine:
 
         data = pd.read_csv(DATA / "firm_years_clean.csv", parse_dates=["Date"]).reset_index(drop=True)
         self.folds, fold_of = [], {}
-        split = StratifiedGroupKFold(5, shuffle=True, random_state=11).split(data, data.SG, groups=data.Name)   # 03 §11
+        split = StratifiedGroupKFold(5, shuffle=True, random_state=11).split(data, data.SG, groups=data.Name)   # 04 §11
         for i, (fit_rows, score_rows) in enumerate(split):
             fit = data.iloc[fit_rows]
             model = clone(self.shadow.model).fit(fit, fit.SG.values)
@@ -240,10 +201,10 @@ class Engine:
                                    cl.groupby(fit.Sector).median().reindex(self.shadow.sectors).fillna(cl.median()),
                                    shap.TreeExplainer(model.named_steps["model"])))
             fold_of.update(dict.fromkeys(data.Name.iloc[score_rows], i))
-        # the saved model, trained on the training companies only, scores the holdout companies (03 §7 and §11's holdout check)
+        # the saved model, trained on the training companies only, scores the holdout companies (04 §7 and §11's holdout check)
         holdout = set(pd.read_csv(ROOT / "results" / "holdout_companies.csv").Name)
         train = data[~data.Name.isin(holdout)]
-        self.holdout_rows = data[data.Name.isin(holdout)].reset_index(drop=True)   # 03's `test`, same order
+        self.holdout_rows = data[data.Name.isin(holdout)].reset_index(drop=True)   # 04's `test`, same order
         cl = current_liabilities(train)
         self.saved = len(self.folds)
         self.folds.append(Fold(self.shadow.model, fit_reference(train),
@@ -252,7 +213,7 @@ class Engine:
                                shap.TreeExplainer(self.shadow.model.named_steps["model"])))
         companies = data.sort_values("Date").groupby("Name").tail(1).copy()   # latest statement per company
         companies["holdout"] = companies.Name.isin(holdout)
-        companies["fold_cf"] = companies.Name.map(fold_of)                                  # 03's every-company view
+        companies["fold_cf"] = companies.Name.map(fold_of)                                  # 04's every-company view
         companies["fold"] = np.where(companies.holdout, self.saved, companies.fold_cf)      # what the app scores with
         for suffix, col in (("_cf", "fold_cf"), ("", "fold")):
             for c in ("p_sg", "headroom_screen", "headroom_call"):
@@ -276,7 +237,7 @@ class Engine:
         return self.shadow.calibrator(self.raw(frame, fold))
 
     def grade(self, frame, p, rule=False):
-        """Grade index from P(SG), 0 = IG-1 ... 4 = SG-2, as in 03's migration table; rule=True adds the saved model's floor
+        """Grade index from P(SG), 0 = IG-1 ... 4 = SG-2, as in 04's migration table; rule=True adds the saved model's floor
         (negative equity means SG-1 or worse), which an incident cannot change because the shock leaves equity's sign alone."""
         g = np.searchsorted(np.asarray(self.cuts), np.asarray(p, dtype=float), side="right")
         if rule:
@@ -284,7 +245,7 @@ class Engine:
         return g
 
     def headroom(self, frame, fold, threshold, debt_funded=True, tax=TAX, tol=1e-6):
-        """Smallest cost (share of revenue) at which P(SG) reaches the threshold: 0 if already there, inf if never (03 §11)."""
+        """Smallest cost (share of revenue) at which P(SG) reaches the threshold: 0 if already there, inf if never (04 §11)."""
         ref = self.folds[fold].ref
         crosses = lambda f, c: self.p_sg(incident_shock(f, c, ref, debt_funded, tax), fold) >= threshold
         out = np.full(len(frame), np.nan)
@@ -381,7 +342,7 @@ class Engine:
         return float(hi)
 
     def global_explanation(self):
-        """SHAP of the saved model on every holdout firm-year, with readable names: the global view on the slides (03 §8)."""
+        """SHAP of the saved model on every holdout firm-year, with readable names: the global view on the slides (04 §8)."""
         if not hasattr(self, "_global"):
             f = self.folds[self.saved]
             X = f.model.named_steps["pre"].transform(self.holdout_rows)
