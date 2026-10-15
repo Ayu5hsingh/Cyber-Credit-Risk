@@ -746,6 +746,11 @@
    "filled_or_clipped": {}
   }
  ],
+ "shap_slide_not_shown": {
+  "shown": 10,
+  "inputs_not_shown": 29,
+  "share_of_summed_mean_abs_shap": 0.313
+ },
  "out_of_time": {
   "Energy, new companies, 2015-16": {
    "AUC": 0.731,

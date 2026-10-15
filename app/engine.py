@@ -1,8 +1,9 @@
 """Engine for the cyber stress-test app: the cross-fitted models of 03 §11, the incident shock, headroom and SHAP.
 
-Every company is scored by the one of five fold models that never saw it, exactly as in 03 ("Cyber headroom for every
-company"). The fold models are refits of the saved pipeline (models/shadow_rating.pkl), so preprocessing, model size,
-calibrator, screen and grade scale all come from that file. app/check_engine.py checks this against results/.
+Every company is scored by a model that never saw it: the 123 holdout companies by the saved model (models/shadow_rating.pkl),
+as in 03's holdout section and on the slides; the other companies by the one of five cross-fitted fold models that left them out,
+as in 03 ("Cyber headroom for every company"). The fold models are refits of the saved pipeline, so preprocessing, model size,
+calibrator, screen and grade scale all come from that file. app/check_engine.py checks both against results/.
 """
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -34,19 +35,22 @@ ANCHORS = pd.DataFrame([
     ("Marks & Spencer", 2025, 0.0217, "Ransomware via social engineering; online orders paused for weeks", "~GBP 300m operating profit / GBP 13.8bn revenue, estimated, gross of insurance"),
 ], columns=["incident", "year", "share_of_revenue", "attack", "basis"])
 
-LABELS = {
-    "currentRatio": "Current ratio", "quickRatio": "Quick ratio", "cashRatio": "Cash ratio",
-    "daysOfSalesOutstanding": "Days sales outstanding", "netProfitMargin": "Net profit margin",
-    "pretaxProfitMargin": "Pre-tax profit margin", "grossProfitMargin": "Gross profit margin",
-    "operatingProfitMargin": "Operating profit margin", "returnOnAssets": "Return on assets",
-    "returnOnCapitalEmployed": "Return on capital employed", "returnOnEquity": "Return on equity",
-    "assetTurnover": "Asset turnover", "fixedAssetTurnover": "Fixed-asset turnover", "debtEquityRatio": "Debt / equity",
-    "debtRatio": "Debt ratio", "effectiveTaxRate": "Effective tax rate",
+LABELS = {   # as on the slides (03 §8)
+    "currentRatio": "Current ratio", "quickRatio": "Quick ratio", "cashRatio": "Cash ratio", "daysOfSalesOutstanding": "Days sales outstanding",
+    "netProfitMargin": "Net profit margin", "pretaxProfitMargin": "Pre-tax margin", "grossProfitMargin": "Gross margin",
+    "operatingProfitMargin": "Operating margin", "returnOnAssets": "Return on assets", "returnOnCapitalEmployed": "Return on capital employed",
+    "returnOnEquity": "Return on equity", "assetTurnover": "Asset turnover", "fixedAssetTurnover": "Fixed asset turnover",
+    "debtEquityRatio": "Debt / equity", "debtRatio": "Debt ratio", "effectiveTaxRate": "Effective tax rate",
     "freeCashFlowOperatingCashFlowRatio": "Free cash flow / operating cash flow", "companyEquityMultiplier": "Equity multiplier",
-    "ebitPerRevenue": "EBIT margin", "operatingCashFlowSalesRatio": "Operating cash flow / sales", "payablesTurnover": "Payables turnover",
-    "roe_negative": "Flag: loss-making", "negative_equity": "Flag: negative equity", "ocf_negative": "Flag: negative operating cash flow",
-    "cogs_not_reported": "Flag: cost of goods not reported", "payables_zero": "Flag: payables turnover 0", "dso_zero": "Flag: DSO 0",
+    "ebitPerRevenue": "EBIT / revenue", "operatingCashFlowSalesRatio": "Operating cash flow / sales", "payablesTurnover": "Payables turnover",
+    "roe_negative": "Flag: negative ROE", "negative_equity": "Flag: negative equity", "ocf_negative": "Flag: negative operating cash flow",
+    "cogs_not_reported": "Flag: COGS not reported", "payables_zero": "Flag: payables zero", "dso_zero": "Flag: DSO zero",
 }
+
+
+def label(column):
+    """Readable input name, as on the slides."""
+    return LABELS.get(column, column.replace("Sector=", "Sector: "))
 
 
 # --- the shock, as in 03 §11 (kept identical; check_engine.py reproduces the notebook's headroom and migration numbers) ---
@@ -169,8 +173,12 @@ def attack_shock(frame, attack, ref, gross_margin, liabilities):
     outflow = ocf_hit + capex
     cash = (frame.cashRatio * liabilities).fillna(0).clip(lower=0).to_numpy()
     cash_used = np.minimum(outflow, cash) if attack.cash_funded else np.zeros(n)
-    new_liabilities = outflow - cash_used + np.where(attack.accrued, charged, 0.0)
-    new_assets = capex + receivables_build - cash_used
+    # a provision is a new liability of the full cost; its tax shield, not yet received in cash, is a deferred-tax asset, so equity
+    # falls by the after-tax cost whether the cost is paid or provisioned
+    provision = np.where(attack.accrued, charged, 0.0)
+    deferred_tax = np.where(attack.accrued & (pnl > 0), (pnl - after_tax) * charged / np.where(pnl > 0, pnl, 1), 0.0)
+    new_liabilities = outflow - cash_used + provision
+    new_assets = capex + receivables_build - cash_used + deferred_tax
     debt_ratio = np.fmax((frame.debtRatio * assets + new_liabilities) / (assets + new_assets), frame.debtRatio)
     # with negative equity (debt ratio >= 1), new assets matched by new debt would lower the ratio: there, as in 03, only the
     # new liabilities count, so the ratio never falls as the attack grows
@@ -189,13 +197,13 @@ def attack_shock(frame, attack, ref, gross_margin, liabilities):
     d["fixedAssetTurnover"] = np.where(moved & (frame.fixedAssetTurnover > 0), sales / (1 / frame.fixedAssetTurnover + capex), frame.fixedAssetTurnover)
     d["daysOfSalesOutstanding"] = frame.daysOfSalesOutstanding + delay
     cl = liabilities.to_numpy()
-    cl_after = cl + np.where(attack.accrued, charged, 0.0)
+    cl_after = cl + provision
     for col, extra in (("cashRatio", 0.0), ("quickRatio", receivables_build), ("currentRatio", receivables_build)):
         d[col] = np.where(moved, (frame[col] * cl - cash_used + extra) / cl_after, frame[col])
 
     d["roe_negative"] = ((frame.roe_negative == 1) | (d.returnOnEquity < 0)).astype(int)
     d["ocf_negative"] = ((frame.ocf_negative == 1) | (d.operatingCashFlowSalesRatio < 0)).astype(int)
-    return d, {"pnl": pnl, "cash_out": outflow, "lost_profit": lost_profit}
+    return d, {"pnl": pnl, "after_tax": after_tax, "cash_out": outflow, "lost_profit": lost_profit, "new_assets": new_assets}
 
 
 # --- the cross-fitted models ---
@@ -232,17 +240,31 @@ class Engine:
                                    cl.groupby(fit.Sector).median().reindex(self.shadow.sectors).fillna(cl.median()),
                                    shap.TreeExplainer(model.named_steps["model"])))
             fold_of.update(dict.fromkeys(data.Name.iloc[score_rows], i))
+        # the saved model, trained on the training companies only, scores the holdout companies (03 §7 and §11's holdout check)
+        holdout = set(pd.read_csv(ROOT / "results" / "holdout_companies.csv").Name)
+        train = data[~data.Name.isin(holdout)]
+        self.holdout_rows = data[data.Name.isin(holdout)].reset_index(drop=True)   # 03's `test`, same order
+        cl = current_liabilities(train)
+        self.saved = len(self.folds)
+        self.folds.append(Fold(self.shadow.model, fit_reference(train),
+                               train.groupby("Sector").grossProfitMargin.median().reindex(self.shadow.sectors).fillna(train.grossProfitMargin.median()),
+                               cl.groupby(train.Sector).median().reindex(self.shadow.sectors).fillna(cl.median()),
+                               shap.TreeExplainer(self.shadow.model.named_steps["model"])))
         companies = data.sort_values("Date").groupby("Name").tail(1).copy()   # latest statement per company
-        companies["fold"] = companies.Name.map(fold_of)
-        companies["p_sg"] = np.nan
-        companies["headroom_screen"] = np.nan
-        companies["headroom_call"] = np.nan
-        for i in range(len(self.folds)):
-            rows = companies[companies.fold == i]
-            companies.loc[rows.index, "p_sg"] = self.p_sg(rows, i)
-            companies.loc[rows.index, "headroom_screen"] = self.headroom(rows, i, self.screen)
-            companies.loc[rows.index, "headroom_call"] = self.headroom(rows, i, CALL)
-        companies["grade"] = self.grade(companies, companies.p_sg)
+        companies["holdout"] = companies.Name.isin(holdout)
+        companies["fold_cf"] = companies.Name.map(fold_of)                                  # 03's every-company view
+        companies["fold"] = np.where(companies.holdout, self.saved, companies.fold_cf)      # what the app scores with
+        for suffix, col in (("_cf", "fold_cf"), ("", "fold")):
+            for c in ("p_sg", "headroom_screen", "headroom_call"):
+                companies[c + suffix] = np.nan
+            for i in range(len(self.folds)):
+                rows = companies[companies[col] == i]
+                if rows.empty:
+                    continue
+                companies.loc[rows.index, "p_sg" + suffix] = self.p_sg(rows, i)
+                companies.loc[rows.index, "headroom_screen" + suffix] = self.headroom(rows, i, self.screen)
+                companies.loc[rows.index, "headroom_call" + suffix] = self.headroom(rows, i, CALL)
+            companies["grade" + suffix] = self.grade(companies, companies["p_sg" + suffix])
         self.companies = companies.set_index("Name", drop=False)
 
     # scoring
@@ -250,7 +272,7 @@ class Engine:
         return self.folds[fold].model.predict_proba(frame)[:, 1]
 
     def p_sg(self, frame, fold):
-        """Calibrated P(SG) from the fold model that never saw these companies."""
+        """Calibrated P(SG) from model `fold` (0-4 the cross-fitted folds, self.saved the saved model)."""
         return self.shadow.calibrator(self.raw(frame, fold))
 
     def grade(self, frame, p, rule=False):
@@ -299,11 +321,16 @@ class Engine:
         return before, after, fed, impacts, fold
 
     def gross_margin_used(self, name):
-        """Profit lost per unit of sales lost, as attack_shock uses it (for turning days into a share of revenue)."""
+        """Profit lost per unit of sales lost, as attack_shock uses it, and where it comes from: the company's own gross margin,
+        its sector's median on the model's training rows when the company does not report one, kept within 5-100%."""
         r = self.row(name)
         f = self.folds[int(r.fold.iloc[0])]
-        gm = r.grossProfitMargin.fillna(r.Sector.map(f.gross_margin)).fillna(f.gross_margin.median()).to_numpy()
-        return float(np.clip(gm, 0.05, 1.0)[0])
+        own = r.grossProfitMargin.iloc[0]
+        gm = own if pd.notna(own) else f.gross_margin.get(r.Sector.iloc[0], f.gross_margin.median())
+        used = float(np.clip(gm, 0.05, 1.0))
+        source = ("its sector's median: the company does not report gross margin" if pd.isna(own)
+                  else f"floored at 5% (reported {own:.1%})" if own < 0.05 else "as reported")
+        return used, source
 
     def attack_scenario(self, name, attack, feed_all=False):
         """Before and after one attack: P(SG), grade, raw score, SHAP, ratios as moved and as the model sees them, impacts."""
@@ -318,7 +345,8 @@ class Engine:
             sv = sv[1] if isinstance(sv, list) else sv
             p = float(self.p_sg(frame, fold)[0])
             out[key] = {"p_sg": p, "grade": int(self.grade(frame, [p])[0]), "raw": float(self.raw(frame, fold)[0]),
-                        "shap": pd.Series(sv[0], index=self.columns), "seen": pd.Series(X[0], index=self.columns), "given": shown.iloc[0]}
+                        "shap": pd.Series(sv[0], index=self.columns), "seen": pd.Series(X[0], index=self.columns), "given": shown.iloc[0],
+                        "fed": frame.iloc[0]}
         winsor = pre.named_transformers_["num"].named_steps["winsor"]
         out["clip_lo"], out["clip_hi"] = winsor.lo_.set_axis(self.features), winsor.hi_.set_axis(self.features)
         return out
@@ -330,7 +358,7 @@ class Engine:
         _, _, fed, _, fold = self.attacked(name, a, feed_all)
         return self.p_sg(fed, fold)
 
-    def attack_line(self, name, attack, threshold, feed_all=False, grid=241, tol=1e-4):
+    def attack_line(self, name, attack, threshold, feed_all=False, grid=241, tol=1e-4):   # tol: relative to the answer
         """The multiple of the attack at which P(SG) first reaches the threshold: 0 if already there, inf if not within the caps.
         Scans a grid first, so it also works when unconstrained ratios are fed and P(SG) need not rise steadily."""
         top = attack.max_scale()
@@ -344,10 +372,21 @@ class Engine:
         if not len(above):
             return np.inf
         lo, hi = scales[above[0] - 1], scales[above[0]]
-        while hi - lo > tol * top:
+        while hi - lo > tol * hi:
             mid = (lo + hi) / 2
             if self.attack_curve(name, attack, [mid], feed_all)[0] >= threshold:
                 hi = mid
             else:
                 lo = mid
         return float(hi)
+
+    def global_explanation(self):
+        """SHAP of the saved model on every holdout firm-year, with readable names: the global view on the slides (03 §8)."""
+        if not hasattr(self, "_global"):
+            f = self.folds[self.saved]
+            X = f.model.named_steps["pre"].transform(self.holdout_rows)
+            sv = f.explainer.shap_values(X)
+            sv = sv[1] if isinstance(sv, list) else sv
+            base = np.full(len(X), float(np.ravel(f.explainer.expected_value)[-1]))
+            self._global = shap.Explanation(values=sv, base_values=base, data=X, feature_names=[label(c) for c in self.columns])
+        return self._global
