@@ -1,0 +1,810 @@
+{
+ "training": {
+  "companies": 469,
+  "firm_years": 1619
+ },
+ "candidates": {
+  "coverage": {
+   "label": "Interest coverage",
+   "family": "leverage and coverage",
+   "formula": "operating margin / (operating margin - pre-tax margin)",
+   "direction": -1,
+   "shock": "recompute"
+  },
+  "implied_rate": {
+   "label": "Implied interest rate",
+   "family": "leverage and coverage",
+   "formula": "(operating margin - pre-tax margin) x asset turnover / debt ratio",
+   "direction": 1,
+   "shock": "hold"
+  },
+  "ocf_liab": {
+   "label": "Operating cash flow / liabilities",
+   "family": "leverage and coverage",
+   "formula": "OCF/sales x asset turnover / debt ratio",
+   "direction": -1,
+   "shock": "hold"
+  },
+  "fcf_liab": {
+   "label": "Free cash flow / liabilities",
+   "family": "leverage and coverage",
+   "formula": "FCF/OCF x OCF/sales x asset turnover / debt ratio",
+   "direction": -1,
+   "shock": "hold"
+  },
+  "lt_liab_ta": {
+   "label": "Long-term liabilities / assets",
+   "family": "leverage and coverage",
+   "formula": "debt ratio - current liabilities / assets (from ROCE)",
+   "direction": 1,
+   "shock": "hold"
+  },
+  "equity_liab": {
+   "label": "Equity / liabilities",
+   "family": "leverage and coverage",
+   "formula": "(1 - debt ratio) / debt ratio",
+   "direction": -1,
+   "shock": "recompute"
+  },
+  "ebit_ta": {
+   "label": "Operating profit / assets",
+   "family": "profitability",
+   "formula": "operating margin x asset turnover",
+   "direction": -1,
+   "shock": "recompute"
+  },
+  "accruals": {
+   "label": "Accruals / assets",
+   "family": "earnings quality",
+   "formula": "(net margin - OCF/sales) x asset turnover",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "cash_conversion": {
+   "label": "Cash conversion",
+   "family": "earnings quality",
+   "formula": "OCF/sales / operating margin",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "opex_burden": {
+   "label": "Overheads / revenue",
+   "family": "profitability",
+   "formula": "gross margin - operating margin",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "wc_ta": {
+   "label": "Working capital / assets",
+   "family": "liquidity",
+   "formula": "(current ratio - 1) x current liabilities / assets",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "cash_runway_days": {
+   "label": "Cash runway (days)",
+   "family": "liquidity",
+   "formula": "cash ratio x current liabilities / assets / asset turnover / (1 - operating margin) x 365",
+   "direction": -1,
+   "shock": "hold"
+  },
+  "dpo_days": {
+   "label": "Days payables outstanding",
+   "family": "liquidity",
+   "formula": "365 x (1 - gross margin) / payables turnover",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "capex_rev": {
+   "label": "Capex / revenue",
+   "family": "investment",
+   "formula": "(1 - FCF/OCF) x OCF/sales",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "ppe_ta": {
+   "label": "Fixed assets / assets",
+   "family": "investment",
+   "formula": "asset turnover / fixed asset turnover",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "intangible_other_ta": {
+   "label": "Intangible and other assets / assets",
+   "family": "investment",
+   "formula": "1 - current assets / assets - fixed assets / assets",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "z_partial": {
+   "label": "Altman Z'' (without retained earnings)",
+   "family": "classic scores",
+   "formula": "6.56 x working capital / assets + 6.72 x operating profit / assets + 1.05 x equity / liabilities",
+   "direction": -1,
+   "shock": "hold"
+  },
+  "op_margin_vol": {
+   "label": "Operating margin volatility",
+   "family": "stability",
+   "formula": "sd of the company's operating margin over its statements so far",
+   "direction": 1,
+   "shock": "hold"
+  },
+  "d_op_margin": {
+   "label": "Change in operating margin",
+   "family": "stability",
+   "formula": "operating margin minus its previous statement's",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "d_debt_ratio": {
+   "label": "Change in debt ratio",
+   "family": "stability",
+   "formula": "debt ratio minus its previous statement's",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "d_coverage": {
+   "label": "Change in interest coverage",
+   "family": "stability",
+   "formula": "coverage minus its previous statement's",
+   "direction": 0,
+   "shock": "hold"
+  },
+  "op_margin_vs_sector": {
+   "label": "Operating margin vs sector",
+   "family": "sector-relative",
+   "formula": "operating margin - sector median",
+   "direction": -1,
+   "shock": "recompute"
+  },
+  "debt_ratio_vs_sector": {
+   "label": "Debt ratio vs sector",
+   "family": "sector-relative",
+   "formula": "debt ratio - sector median",
+   "direction": 1,
+   "shock": "recompute"
+  },
+  "coverage_vs_sector": {
+   "label": "Interest coverage vs sector",
+   "family": "sector-relative",
+   "formula": "coverage - sector median",
+   "direction": -1,
+   "shock": "recompute"
+  },
+  "ocf_sales_vs_sector": {
+   "label": "Operating cash flow / sales vs sector",
+   "family": "sector-relative",
+   "formula": "OCF/sales - sector median",
+   "direction": -1,
+   "shock": "recompute"
+  }
+ },
+ "filter": {
+  "coverage": {
+   "missing": 0.0,
+   "AUC": 0.2734,
+   "AUC lo": 0.2386,
+   "AUC hi": 0.3084,
+   "data says": "safer when higher",
+   "AA and above": 50.0,
+   "A": 13.2232,
+   "BBB": 6.6615,
+   "BB": 3.5521,
+   "B": 1.57,
+   "CCC and below": 0.3895,
+   "max |rho| with an input": 0.7155,
+   "passes": true,
+   "reason": ""
+  },
+  "implied_rate": {
+   "missing": 0.0012,
+   "AUC": 0.6262,
+   "AUC lo": 0.5849,
+   "AUC hi": 0.6644,
+   "data says": "riskier when higher",
+   "AA and above": 0.0013,
+   "A": 0.0127,
+   "BBB": 0.0181,
+   "BB": 0.0263,
+   "B": 0.0329,
+   "CCC and below": 0.0345,
+   "max |rho| with an input": 0.2619,
+   "passes": true,
+   "reason": ""
+  },
+  "ocf_liab": {
+   "missing": 0.0012,
+   "AUC": 0.3204,
+   "AUC lo": 0.2768,
+   "AUC hi": 0.3659,
+   "data says": "safer when higher",
+   "AA and above": 0.2464,
+   "A": 0.1678,
+   "BBB": 0.1512,
+   "BB": 0.1268,
+   "B": 0.0881,
+   "CCC and below": 0.0486,
+   "max |rho| with an input": 0.5304,
+   "passes": true,
+   "reason": ""
+  },
+  "fcf_liab": {
+   "missing": 0.034,
+   "AUC": 0.3982,
+   "AUC lo": 0.3544,
+   "AUC hi": 0.4447,
+   "data says": "safer when higher",
+   "AA and above": 0.141,
+   "A": 0.1115,
+   "BBB": 0.082,
+   "BB": 0.0725,
+   "B": 0.0402,
+   "CCC and below": 0.0133,
+   "max |rho| with an input": 0.8089,
+   "passes": true,
+   "reason": ""
+  },
+  "lt_liab_ta": {
+   "missing": 0.0049,
+   "AUC": 0.622,
+   "AUC lo": 0.5737,
+   "AUC hi": 0.67,
+   "data says": "riskier when higher",
+   "AA and above": 0.337,
+   "A": 0.4141,
+   "BBB": 0.4304,
+   "BB": 0.459,
+   "B": 0.5554,
+   "CCC and below": 0.6778,
+   "max |rho| with an input": 0.7579,
+   "passes": true,
+   "reason": ""
+  },
+  "equity_liab": {
+   "missing": 0.0012,
+   "AUC": 0.3979,
+   "AUC lo": 0.3514,
+   "AUC hi": 0.4471,
+   "data says": "safer when higher",
+   "AA and above": 0.6844,
+   "A": 0.5934,
+   "BBB": 0.5761,
+   "BB": 0.5634,
+   "B": 0.3479,
+   "CCC and below": 0.2221,
+   "max |rho| with an input": 1.0,
+   "passes": false,
+   "reason": "near-copy of debtRatio (|rho| 1.00)"
+  },
+  "ebit_ta": {
+   "missing": 0.0,
+   "AUC": 0.306,
+   "AUC lo": 0.2684,
+   "AUC hi": 0.3456,
+   "data says": "safer when higher",
+   "AA and above": 0.1336,
+   "A": 0.0973,
+   "BBB": 0.0765,
+   "BB": 0.0577,
+   "B": 0.0476,
+   "CCC and below": 0.0115,
+   "max |rho| with an input": 0.8891,
+   "passes": true,
+   "reason": ""
+  },
+  "accruals": {
+   "missing": 0.0,
+   "AUC": 0.4358,
+   "AUC lo": 0.3949,
+   "AUC hi": 0.4749,
+   "data says": "safer when higher",
+   "AA and above": -0.0432,
+   "A": -0.039,
+   "BBB": -0.044,
+   "BB": -0.0514,
+   "B": -0.0543,
+   "CCC and below": -0.0496,
+   "max |rho| with an input": 0.3807,
+   "passes": true,
+   "reason": ""
+  },
+  "cash_conversion": {
+   "missing": 0.1235,
+   "AUC": 0.5233,
+   "AUC lo": 0.4784,
+   "AUC hi": 0.5724,
+   "data says": "riskier when higher",
+   "AA and above": 1.0255,
+   "A": 1.0776,
+   "BBB": 1.1527,
+   "BB": 1.2282,
+   "B": 1.1113,
+   "CCC and below": 1.0406,
+   "max |rho| with an input": 0.451,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "opex_burden": {
+   "missing": 0.2174,
+   "AUC": 0.5138,
+   "AUC lo": 0.4604,
+   "AUC hi": 0.568,
+   "data says": "riskier when higher",
+   "AA and above": 0.3451,
+   "A": 0.2494,
+   "BBB": 0.1876,
+   "BB": 0.2124,
+   "B": 0.223,
+   "CCC and below": 0.277,
+   "max |rho| with an input": 0.8468,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "wc_ta": {
+   "missing": 0.0049,
+   "AUC": 0.5665,
+   "AUC lo": 0.5145,
+   "AUC hi": 0.6147,
+   "data says": "riskier when higher",
+   "AA and above": 0.0903,
+   "A": 0.0616,
+   "BBB": 0.0738,
+   "BB": 0.116,
+   "B": 0.0866,
+   "CCC and below": 0.1419,
+   "max |rho| with an input": 0.9075,
+   "passes": false,
+   "reason": "near-copy of currentRatio (|rho| 0.91)"
+  },
+  "cash_runway_days": {
+   "missing": 0.0259,
+   "AUC": 0.5518,
+   "AUC lo": 0.5035,
+   "AUC hi": 0.6005,
+   "data says": "riskier when higher",
+   "AA and above": 36.6892,
+   "A": 26.6547,
+   "BBB": 28.168,
+   "BB": 34.3036,
+   "B": 32.3693,
+   "CCC and below": 37.3697,
+   "max |rho| with an input": 0.8492,
+   "passes": false,
+   "reason": "data contradict the credit direction"
+  },
+  "dpo_days": {
+   "missing": 0.2199,
+   "AUC": 0.4735,
+   "AUC lo": 0.4182,
+   "AUC hi": 0.5286,
+   "data says": "safer when higher",
+   "AA and above": 27.2158,
+   "A": 31.7577,
+   "BBB": 34.8989,
+   "BB": 32.2029,
+   "B": 30.193,
+   "CCC and below": 25.0409,
+   "max |rho| with an input": 0.7022,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "capex_rev": {
+   "missing": 0.0334,
+   "AUC": 0.4414,
+   "AUC lo": 0.3911,
+   "AUC hi": 0.4921,
+   "data says": "safer when higher",
+   "AA and above": 0.045,
+   "A": 0.0357,
+   "BBB": 0.0458,
+   "BB": 0.0359,
+   "B": 0.0376,
+   "CCC and below": 0.028,
+   "max |rho| with an input": 0.7524,
+   "passes": true,
+   "reason": ""
+  },
+  "ppe_ta": {
+   "missing": 0.0012,
+   "AUC": 0.4953,
+   "AUC lo": 0.4436,
+   "AUC hi": 0.5504,
+   "data says": "safer when higher",
+   "AA and above": 0.236,
+   "A": 0.2258,
+   "BBB": 0.3061,
+   "BB": 0.2356,
+   "B": 0.3501,
+   "CCC and below": 0.3233,
+   "max |rho| with an input": 0.8826,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "intangible_other_ta": {
+   "missing": 0.0062,
+   "AUC": 0.4638,
+   "AUC lo": 0.4142,
+   "AUC hi": 0.5119,
+   "data says": "safer when higher",
+   "AA and above": 0.3714,
+   "A": 0.3301,
+   "BBB": 0.2989,
+   "BB": 0.3156,
+   "B": 0.2441,
+   "CCC and below": 0.1893,
+   "max |rho| with an input": 0.5276,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "z_partial": {
+   "missing": 0.0062,
+   "AUC": 0.4475,
+   "AUC lo": 0.3973,
+   "AUC hi": 0.4949,
+   "data says": "safer when higher",
+   "AA and above": 2.4045,
+   "A": 1.8511,
+   "BBB": 1.7338,
+   "BB": 1.7752,
+   "B": 1.4376,
+   "CCC and below": 1.1834,
+   "max |rho| with an input": 0.7503,
+   "passes": true,
+   "reason": ""
+  },
+  "op_margin_vol": {
+   "missing": 0.2897,
+   "AUC": 0.6488,
+   "AUC lo": 0.5965,
+   "AUC hi": 0.7016,
+   "data says": "riskier when higher",
+   "AA and above": 0.0172,
+   "A": 0.0161,
+   "BBB": 0.0191,
+   "BB": 0.0327,
+   "B": 0.0379,
+   "CCC and below": 0.0921,
+   "max |rho| with an input": 0.4702,
+   "passes": true,
+   "reason": ""
+  },
+  "d_op_margin": {
+   "missing": 0.2897,
+   "AUC": 0.4638,
+   "AUC lo": 0.4307,
+   "AUC hi": 0.4983,
+   "data says": "safer when higher",
+   "AA and above": 0.0024,
+   "A": 0.0017,
+   "BBB": 0.0011,
+   "BB": -0.0011,
+   "B": -0.0036,
+   "CCC and below": -0.0039,
+   "max |rho| with an input": 0.3063,
+   "passes": true,
+   "reason": ""
+  },
+  "d_debt_ratio": {
+   "missing": 0.2897,
+   "AUC": 0.5223,
+   "AUC lo": 0.4817,
+   "AUC hi": 0.5555,
+   "data says": "riskier when higher",
+   "AA and above": 0.0118,
+   "A": 0.0055,
+   "BBB": 0.0051,
+   "BB": 0.0058,
+   "B": 0.0167,
+   "CCC and below": 0.0321,
+   "max |rho| with an input": 0.2315,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "d_coverage": {
+   "missing": 0.2897,
+   "AUC": 0.491,
+   "AUC lo": 0.4644,
+   "AUC hi": 0.5187,
+   "data says": "safer when higher",
+   "AA and above": 0.0,
+   "A": 0.0,
+   "BBB": 0.0,
+   "BB": 0.0,
+   "B": 0.0,
+   "CCC and below": 0.0,
+   "max |rho| with an input": 0.2712,
+   "passes": false,
+   "reason": "does not separate IG/SG on its own"
+  },
+  "op_margin_vs_sector": {
+   "missing": 0.0,
+   "AUC": 0.362,
+   "AUC lo": 0.3176,
+   "AUC hi": 0.4038,
+   "data says": "safer when higher",
+   "AA and above": 0.0826,
+   "A": 0.0252,
+   "BBB": 0.0062,
+   "BB": -0.0243,
+   "B": -0.034,
+   "CCC and below": -0.1309,
+   "max |rho| with an input": 0.9263,
+   "passes": false,
+   "reason": "near-copy of operatingProfitMargin (|rho| 0.93)"
+  },
+  "debt_ratio_vs_sector": {
+   "missing": 0.0,
+   "AUC": 0.6238,
+   "AUC lo": 0.577,
+   "AUC hi": 0.6701,
+   "data says": "riskier when higher",
+   "AA and above": -0.0446,
+   "A": -0.0255,
+   "BBB": -0.0106,
+   "BB": 0.0051,
+   "B": 0.1089,
+   "CCC and below": 0.1439,
+   "max |rho| with an input": 0.9449,
+   "passes": false,
+   "reason": "near-copy of debtRatio (|rho| 0.94)"
+  },
+  "coverage_vs_sector": {
+   "missing": 0.0,
+   "AUC": 0.3062,
+   "AUC lo": 0.2704,
+   "AUC hi": 0.3425,
+   "data says": "safer when higher",
+   "AA and above": 39.8475,
+   "A": 4.7181,
+   "BBB": 0.7814,
+   "BB": -1.6332,
+   "B": -2.5075,
+   "CCC and below": -4.994,
+   "max |rho| with an input": 0.5832,
+   "passes": false,
+   "reason": "near-copy of coverage"
+  },
+  "ocf_sales_vs_sector": {
+   "missing": 0.0,
+   "AUC": 0.4419,
+   "AUC lo": 0.3919,
+   "AUC hi": 0.4933,
+   "data says": "safer when higher",
+   "AA and above": 0.0325,
+   "A": 0.0101,
+   "BBB": 0.0063,
+   "BB": -0.005,
+   "B": -0.0279,
+   "CCC and below": -0.0766,
+   "max |rho| with an input": 0.8382,
+   "passes": true,
+   "reason": ""
+  }
+ },
+ "passed_filter": [
+  "coverage",
+  "ebit_ta",
+  "ocf_liab",
+  "op_margin_vol",
+  "implied_rate",
+  "lt_liab_ta",
+  "fcf_liab",
+  "accruals",
+  "capex_rev",
+  "ocf_sales_vs_sector",
+  "z_partial",
+  "d_op_margin"
+ ],
+ "forward_path": [
+  {
+   "step": 0,
+   "change": "start: 21 ratios, 6 flags",
+   "inputs": 27,
+   "cv_auc": 0.8122,
+   "se": 0.0083,
+   "gain_vs_current": 0.0,
+   "gain_sd_over_folds": 0.0
+  },
+  {
+   "step": 1,
+   "change": "+ implied_rate",
+   "inputs": 28,
+   "cv_auc": 0.8238,
+   "se": 0.0064,
+   "gain_vs_current": 0.0116,
+   "gain_sd_over_folds": 0.0128
+  },
+  {
+   "step": 2,
+   "change": "+ op_margin_vol",
+   "inputs": 29,
+   "cv_auc": 0.8288,
+   "se": 0.0061,
+   "gain_vs_current": 0.0166,
+   "gain_sd_over_folds": 0.0143
+  },
+  {
+   "step": 3,
+   "change": "+ coverage",
+   "inputs": 30,
+   "cv_auc": 0.8301,
+   "se": 0.0061,
+   "gain_vs_current": 0.0178,
+   "gain_sd_over_folds": 0.015
+  },
+  {
+   "step": 4,
+   "change": "+ ocf_liab",
+   "inputs": 31,
+   "cv_auc": 0.8315,
+   "se": 0.0065,
+   "gain_vs_current": 0.0192,
+   "gain_sd_over_folds": 0.014
+  },
+  {
+   "step": 5,
+   "change": "+ accruals",
+   "inputs": 32,
+   "cv_auc": 0.8333,
+   "se": 0.0064,
+   "gain_vs_current": 0.021,
+   "gain_sd_over_folds": 0.0153
+  },
+  {
+   "step": 6,
+   "change": "+ capex_rev",
+   "inputs": 33,
+   "cv_auc": 0.8338,
+   "se": 0.0064,
+   "gain_vs_current": 0.0216,
+   "gain_sd_over_folds": 0.0142
+  },
+  {
+   "step": 7,
+   "change": "+ fcf_liab",
+   "inputs": 34,
+   "cv_auc": 0.834,
+   "se": 0.0065,
+   "gain_vs_current": 0.0218,
+   "gain_sd_over_folds": 0.0147
+  },
+  {
+   "step": 8,
+   "change": "+ ocf_sales_vs_sector",
+   "inputs": 35,
+   "cv_auc": 0.8331,
+   "se": 0.0065,
+   "gain_vs_current": 0.0209,
+   "gain_sd_over_folds": 0.0145
+  }
+ ],
+ "forward_choice": {
+  "best_step": 7,
+  "best_cv_auc": 0.834,
+  "one_se": 0.0065,
+  "chosen_step": 2
+ },
+ "backward_path": [
+  {
+   "step": 0,
+   "change": "forward choice",
+   "inputs": 29,
+   "cv_auc": 0.8288,
+   "se": 0.0061
+  },
+  {
+   "step": 1,
+   "change": "- gross margin",
+   "inputs": 27,
+   "cv_auc": 0.83,
+   "se": 0.006
+  },
+  {
+   "step": 2,
+   "change": "- equity multiplier",
+   "inputs": 26,
+   "cv_auc": 0.8295,
+   "se": 0.006
+  },
+  {
+   "step": 3,
+   "change": "- payables turnover",
+   "inputs": 24,
+   "cv_auc": 0.8284,
+   "se": 0.0059
+  },
+  {
+   "step": 4,
+   "change": "- DSO-zero flag",
+   "inputs": 23,
+   "cv_auc": 0.8295,
+   "se": 0.0059
+  },
+  {
+   "step": 5,
+   "change": "- debt / equity",
+   "inputs": 22,
+   "cv_auc": 0.8291,
+   "se": 0.0056
+  },
+  {
+   "step": 6,
+   "change": "- effective tax rate",
+   "inputs": 21,
+   "cv_auc": 0.8268,
+   "se": 0.0061
+  }
+ ],
+ "backward_choice": {
+  "search_best_stage": "forward",
+  "search_best_step": 7,
+  "search_best_cv_auc": 0.834,
+  "one_se": 0.0065,
+  "line": 0.8276,
+  "chosen_step": 5,
+  "stagewise_rule_step": 6,
+  "stagewise_rule_cv_auc": 0.8268
+ },
+ "final": {
+  "added": [
+   "implied_rate",
+   "op_margin_vol"
+  ],
+  "removed": [
+   "grossProfitMargin",
+   "debtEquityRatio",
+   "companyEquityMultiplier",
+   "payablesTurnover",
+   "cogs_not_reported",
+   "payables_zero",
+   "dso_zero"
+  ],
+  "inputs": 22,
+  "cv_auc_current": 0.8122,
+  "cv_auc_final": 0.8291,
+  "gain": 0.0168,
+  "gain_sd_over_folds": 0.0141,
+  "folds_better": 13
+ },
+ "shadow_check": {
+  "strongest_shadow": "shadow_implied_rate",
+  "strongest_shadow_importance": 0.0005,
+  "added": {
+   "implied_rate": 0.0319,
+   "op_margin_vol": 0.0059
+  },
+  "rank_of_added": {
+   "implied_rate": 1,
+   "op_margin_vol": 7
+  },
+  "inputs_ranked": 19
+ },
+ "shap_rank_of_added": {
+  "implied_rate": 1,
+  "op_margin_vol": 8
+ },
+ "shap_top10": {
+  "implied_rate": 0.4008,
+  "debtRatio": 0.3298,
+  "operatingCashFlowSalesRatio": 0.299,
+  "returnOnCapitalEmployed": 0.2524,
+  "ebitPerRevenue": 0.1784,
+  "cashRatio": 0.1683,
+  "returnOnAssets": 0.1612,
+  "op_margin_vol": 0.1602,
+  "assetTurnover": 0.1184,
+  "currentRatio": 0.112
+ },
+ "stability": {
+  "resamples": 20,
+  "median_gain": 0.0166,
+  "positive": 20,
+  "min": 0.0077,
+  "max": 0.0242
+ },
+ "shock_check": {
+  "companies": 469,
+  "score_falls": 0
+ }
+}

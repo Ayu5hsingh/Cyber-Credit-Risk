@@ -1,0 +1,51 @@
+{
+ "numeric": [
+  "currentRatio",
+  "quickRatio",
+  "cashRatio",
+  "daysOfSalesOutstanding",
+  "netProfitMargin",
+  "pretaxProfitMargin",
+  "operatingProfitMargin",
+  "returnOnAssets",
+  "returnOnCapitalEmployed",
+  "returnOnEquity",
+  "assetTurnover",
+  "fixedAssetTurnover",
+  "debtRatio",
+  "effectiveTaxRate",
+  "freeCashFlowOperatingCashFlowRatio",
+  "ebitPerRevenue",
+  "operatingCashFlowSalesRatio",
+  "implied_rate",
+  "op_margin_vol"
+ ],
+ "computed": [],
+ "flags": [
+  "roe_negative",
+  "negative_equity",
+  "ocf_negative"
+ ],
+ "added": [
+  "implied_rate",
+  "op_margin_vol"
+ ],
+ "removed": [
+  "grossProfitMargin",
+  "debtEquityRatio",
+  "companyEquityMultiplier",
+  "payablesTurnover",
+  "cogs_not_reported",
+  "payables_zero",
+  "dso_zero"
+ ],
+ "directions": {
+  "implied_rate": 1,
+  "op_margin_vol": 1
+ },
+ "labels": {
+  "implied_rate": "Implied interest rate",
+  "op_margin_vol": "Operating margin volatility"
+ },
+ "rule": "03_features: filter, forward selection and backward elimination on grouped CV, one-SE rule; training companies only"
+}
