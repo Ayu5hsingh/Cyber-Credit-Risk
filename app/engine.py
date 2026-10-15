@@ -23,6 +23,7 @@ warnings.filterwarnings("ignore", message=".*TreeExplainer shap values output ha
 ROOT = Path(__file__).resolve().parents[1]
 DATA, MODELS = ROOT / "data" / "processed", ROOT / "models"
 sys.path.insert(0, str(ROOT))
+from cyber_credit.features import CANDIDATES  # noqa: E402
 from cyber_credit.shock import MAX_COST, TAX, assets_over_capital_employed, fit_reference, incident_shock  # noqa: E402,F401
 
 CALL = 0.5        # a model classification as SG
@@ -46,6 +47,7 @@ LABELS = {   # as on the slides (04 §8)
     "ebitPerRevenue": "EBIT / revenue", "operatingCashFlowSalesRatio": "Operating cash flow / sales", "payablesTurnover": "Payables turnover",
     "roe_negative": "Flag: negative ROE", "negative_equity": "Flag: negative equity", "ocf_negative": "Flag: negative operating cash flow",
     "cogs_not_reported": "Flag: COGS not reported", "payables_zero": "Flag: payables zero", "dso_zero": "Flag: DSO zero",
+    **{c: k.label for c, k in CANDIDATES.items()},   # the credit features of 03_features
 }
 
 
@@ -182,14 +184,15 @@ class Engine:
     def __init__(self):
         self.shadow = cloudpickle.loads((MODELS / "shadow_rating.pkl").read_bytes())
         schema = self.shadow.schema
-        self.features, self.flags = schema["features"], schema["flags"]
+        self.features, self.flags = schema["features"], schema["flags"]     # features: the model's numeric columns, in order
+        self.inputs = schema["inputs"]                                         # the columns score() needs (the rest are computed)
         self.columns = self.features + self.flags + [f"Sector={s}" for s in self.shadow.sectors]
         self.screen = self.shadow.screen
         self.cuts, self.grade_names = self.shadow.grades["cuts"], self.shadow.grades["names"]
         mono = self.shadow.model.named_steps["model"].monotone_constraints
-        self.unconstrained = [f for f, m in zip(self.columns, mono) if m == 0 and f in self.features]
+        self.unconstrained = [f for f, m in zip(self.columns, mono) if m == 0 and f in self.inputs]
 
-        data = pd.read_csv(DATA / "firm_years_clean.csv", parse_dates=["Date"]).reset_index(drop=True)
+        data = pd.read_csv(DATA / "firm_years_features.csv", parse_dates=["Date"]).reset_index(drop=True)
         self.folds, fold_of = [], {}
         split = StratifiedGroupKFold(5, shuffle=True, random_state=11).split(data, data.SG, groups=data.Name)   # 04 §11
         for i, (fit_rows, score_rows) in enumerate(split):
@@ -237,7 +240,7 @@ class Engine:
         return self.shadow.calibrator(self.raw(frame, fold))
 
     def grade(self, frame, p, rule=False):
-        """Grade index from P(SG), 0 = IG-1 ... 4 = SG-2, as in 04's migration table; rule=True adds the saved model's floor
+        """Grade index from P(SG), 0 = the best grade, as in 04's migration table; rule=True adds the saved model's floor
         (negative equity means SG-1 or worse), which an incident cannot change because the shock leaves equity's sign alone."""
         g = np.searchsorted(np.asarray(self.cuts), np.asarray(p, dtype=float), side="right")
         if rule:
@@ -298,17 +301,19 @@ class Engine:
         before, after, fed, impacts, fold = self.attacked(name, attack, feed_all)
         f = self.folds[fold]
         pre = f.model.named_steps["pre"]
+        credit = pre.named_steps["credit"]          # adds the computed credit features, so they show before and after
         out = {"fold": fold, "base": float(np.ravel(f.explainer.expected_value)[-1]),
                "impacts": {k: float(v[0]) for k, v in impacts.items()}}
         for key, frame, shown in (("before", before, before), ("after", fed, after)):
             X = pre.transform(frame)
+            frame, shown = credit.transform(frame), credit.transform(shown)
             sv = f.explainer.shap_values(X)
             sv = sv[1] if isinstance(sv, list) else sv
             p = float(self.p_sg(frame, fold)[0])
             out[key] = {"p_sg": p, "grade": int(self.grade(frame, [p])[0]), "raw": float(self.raw(frame, fold)[0]),
                         "shap": pd.Series(sv[0], index=self.columns), "seen": pd.Series(X[0], index=self.columns), "given": shown.iloc[0],
                         "fed": frame.iloc[0]}
-        winsor = pre.named_transformers_["num"].named_steps["winsor"]
+        winsor = pre.named_steps["columns"].named_transformers_["num"].named_steps["winsor"]
         out["clip_lo"], out["clip_hi"] = winsor.lo_.set_axis(self.features), winsor.hi_.set_axis(self.features)
         return out
 

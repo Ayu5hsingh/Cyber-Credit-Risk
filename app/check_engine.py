@@ -49,7 +49,7 @@ print(f"holdout: {len(ho)} companies scored by the saved model; {len(ho_ig)} rat
 import pandas as pd  # noqa: E402
 from engine import Attack  # noqa: E402
 
-model_cols = eng.features + eng.flags
+model_cols = eng.inputs + eng.flags   # the input columns (computed features are made inside the model)
 for name in co.index:
     f = int(co.loc[name, "fold"])
     before, after, fed, _, fold = eng.attacked(name, Attack(cost=0.0217))

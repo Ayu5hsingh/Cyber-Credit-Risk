@@ -170,7 +170,7 @@ c1, c2, c3, c4 = st.columns(4)
 c1.metric("P(SG), calibrated", f"{a_['p_sg']:.2f}", f"{a_['p_sg'] - b['p_sg']:+.2f} from {b['p_sg']:.2f}", delta_color="inverse")
 on_after, on_before = a_["p_sg"] >= eng.screen, b["p_sg"] >= eng.screen
 c2.metric("Grade from P(SG)", G[a_["grade"]], f"{moved:+d} (was {G[b['grade']]})" if moved else None, delta_color="inverse",
-          help="Internal grade from calibrated P(SG) alone (cut-offs 0.2 / 0.4 / 0.6 / 0.8), as in the deck's migration table. "
+          help=f"Internal grade from calibrated P(SG) alone (cut-offs {' / '.join(f'{c:g}' for c in eng.cuts)}), as in the deck's migration table. "
                "The saved model also applies a rule (negative equity: SG-1 or worse), flagged below when it applies.")
 change = int(call_after) - int(call_before)
 c3.metric("Model call", "SG" if call_after else "IG", f"{change:+d} (was {'SG' if call_before else 'IG'})" if change else None,
@@ -184,7 +184,7 @@ if a_["p_sg"] < b["p_sg"] - 1e-9:
                "learned that more liquidity goes with more risk, so these ratios can move P(SG) the wrong way. This is why they are off by default.")
 if r.negative_equity == 1:
     st.warning("Negative equity: the saved model's rule puts this company at SG-1 or worse whatever its P(SG), so its internal grade is at "
-               "least SG-1. Leverage effects of an attack are approximate here: debt / equity and the equity multiplier are not moved.")
+               "least SG-1. Leverage effects of an attack are approximate here: the attack raises the debt ratio but never changes equity's sign.")
 if not 0 < r.assetTurnover <= 20:
     st.warning(f"This statement reports an implausible asset turnover ({r.assetTurnover:.3g}), so returns on assets, capital and equity "
                "after an attack are not meaningful for this company.")
@@ -425,8 +425,9 @@ with **cash on hand**, cash is spent first, lowering the cash, quick and current
   normal year's revenue, as in the notebook, so lost profit is charged like a cost. Tax ({tax:.0%}) shields the hit only up to existing profit.
 - **Cash on hand** needs current liabilities, which the ratios do not give directly: they are estimated from receivables ÷ (quick − cash ratio),
   or the sector median where that is unstable.
-- **Not moved by any attack**: debt / equity and the equity multiplier (as in the notebook), so the negative-equity flag never switches on
-  and the leverage effect is understated.
+- **Not moved by any attack**: the implied interest rate and the operating-margin volatility, the two credit features of 03_features.
+  The first is the price lenders charge today and the second is the company's history, so both stay at today's value: the attack
+  adds no interest on the new debt and no spread widening, which understates its effect. The negative-equity flag never switches on.
 - **Ratios the model is not monotone in** (cash, quick and current ratios, days sales outstanding, asset and fixed-asset turnover) are
   shown but held at today's value unless the toggle is on. The model reads more liquidity as riskier, likely because companies with
   market access hold less cash; feeding a cash drain could make an attack look like an improvement.
