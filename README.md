@@ -124,7 +124,7 @@ model.metadata                         # model size, screen, grade cut-offs, tra
 ```
 
 ## Layout
-There are no `.py` files: all code lives in the three notebooks, and assert cells check every cleaning rule, count and stress-test property.
+All analysis code lives in the three notebooks, and assert cells check every cleaning rule, count and stress-test property. The only `.py` files are the stress-test app in `app/`.
 ```
 data/                 raw CSV as delivered
 data/processed/       firm_years_clean.csv (2,028 firm-years), firm_years_naive.csv (duplicates kept, for the leakage baseline),
@@ -138,6 +138,7 @@ notebooks/
                           every company cross-fitted, by sector), internal grades on the holdout and the cyber migration table;
                           appendix: the full-rating attempt, tiers, cost rule
 models/               shadow_rating.pkl, the scoring artifact (03)
+app/                  the cyber stress-test app (Streamlit): engine.py, app.py, check_engine.py, run.sh
 results/              numbers_of_record.json (03), eda_numbers.json (01), cleaning_numbers.json (02), holdout_companies.csv
 figures/              figures written by the notebooks (eda_* from 01, fig_* from 03)
 figures/slides/       slide versions of the data findings, one color rule for the deck (01 section 15; flags.png from 02)
@@ -158,3 +159,24 @@ jupyter nbconvert --to notebook --execute --inplace 02_data_cleaning.ipynb && \
 jupyter nbconvert --to notebook --execute --inplace 03_modelling.ipynb
 ```
 01 and 02 take seconds; 03 takes 2–5 minutes (mostly the model-size grid). All three are deterministic, numbers and figures.
+
+## The stress-test app
+Pick a company and one of four attack types: **operations shutdown** (days of lost sales), **data breach** (one-off costs, paid now or
+provisioned), **billing / payments disruption** (direct costs plus collections still late at year-end) or **destructive malware / IT rebuild**
+(an outage plus capitalised IT spending), each sizeable to a reported incident. Each attack moves the ratios it would hit in the accounts;
+the page shows P(SG), internal grade, the SHAP drivers before and after, and **the line**: how big the attack can get before the company
+lands on the review list and before the model calls it SG, in days or % of revenue (and money, if a revenue figure is entered).
+
+- Every company is scored by the one of five cross-fitted models that never saw it, as in 03's every-company headroom; the models are
+  refits of `models/shadow_rating.pkl`, so preprocessing, calibrator, screen and grade scale come from the saved file.
+- A paid, debt-funded data breach is exactly 03's shock, so the deck's numbers hold for it. The other attack types are app-only
+  explorations; the mapping from attack to ratios is an assumption, set out on the page.
+- Ratios the model is not monotone in (liquidity, days sales outstanding, turnover) are shown but held at today's value by default: the
+  model reads more cash as riskier, so feeding a cash drain can make an attack look like an improvement. A toggle feeds them for Q&A.
+- `check_engine.py` checks that the app reproduces 03's headroom and migration numbers, that the breach equals 03's shock for all 592
+  companies, and that P(SG) never falls as any attack grows.
+```bash
+pip install -r app/requirements.txt
+app/run.sh                      # opens http://localhost:8501; sets the libomp path as above
+python app/check_engine.py      # with the same environment as the notebooks; about 90 seconds
+```
